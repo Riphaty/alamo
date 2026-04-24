@@ -1,0 +1,14 @@
+{% extends 'website/base.html' %}
+{% block content %}
+{% include 'shipping/toolbar.html' %}
+<div class="content-container">
+    <div class="sales-container">
+        <form method="POST">
+            <h2>INGIZA SHIPMENT HAPA</h2>
+            {% csrf_token %}
+            {{ form }}
+            <button type="submit" class="edit-btn">Add</button>
+        </form>
+    </div>  
+</div>
+{% endblock %}

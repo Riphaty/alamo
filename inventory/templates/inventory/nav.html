@@ -1,0 +1,46 @@
+<div class="side-bar">
+    <div class="icon-container">
+        <a href="{% url 'add_sales' %}" class="icon-link">
+            <div class="icons"><i class="fa-solid fa-cart-shopping"></i><span class="icon-title">Ingiza<br>Mauzo</span></div>
+        </a>
+    </div>
+    <div class="icon-container">
+        <a href="{% url 'sales' %}" class="icon-link">
+            <div class="icons"><i class="fa-solid fa-coins"></i><span class="icon-title">Angalia<br>Sales</span></div>
+        </a>
+    </div>
+    <div class="icon-container">
+        <a href="{% url 'pending_sales' %}" class="icon-link">
+            <div class="icons"><i class="fa-solid fa-clock"></i><span class="icon-title">Pending<br>Orders</span></div>
+        </a>
+    </div>
+    <div class="icon-container">
+        <a href="{% url 'stocks' %}" class="icon-link">
+            <div class="icons"><i class="fa-solid fa-warehouse"></i><span class="icon-title">Angalia<br>Stocks</span></div>
+        </a>
+    </div>
+    <div class="icon-container">
+        <a href="{% url 'add_stock' %}" class="icon-link">
+            <div class="icons"><i class="fa-solid fa-box-open"></i></i><span class="icon-title">Ingiza<br>Stock</span></div>
+        </a>
+    </div>
+</div>
+<div class="top-bar">
+    <div class="start">
+        <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+        <div class="manager">
+            <a href="{% url 'admin_panel' %}"><i class="fa-solid fa-globe" style="padding: 10px; font-size: 20px;"></i><span>Website</span></a>
+            <a href="{% url 'shipping_home' %}"><i class="fa-solid fa-ship" style="padding: 10px; font-size: 20px;"></i><span>Shipments </span></a>
+        </div>
+    </div>
+    <div class="end">
+        <div class="manager">
+            <a href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket" style="padding: 10px; font-size: 20px;"></i><span>Logout</span></a>
+        </div>
+    </div>
+</div>
+<script>
+function toggleSidebar(){
+    document.body.classList.toggle("sidebar-open");
+}
+</script>

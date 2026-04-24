@@ -1,0 +1,27 @@
+{% extends 'website/base.html' %}
+{% block content %}
+{% include 'website/tool_bar.html' %}
+<div class="sales-container">
+    <div class="content-container">
+        <div class="pixel-page">
+            <form method="POST" class="form-box">
+                <h2>Ingiza Meta Pixels Hapa</h2>
+                {% csrf_token %}
+                <label for="meta-pixel">Meta Pixel (Code)</label>
+                <textarea name="meta-pixel" id="description">{{ site_settings.meta_pixel }}</textarea>
+                <button class="edit-btn" type="submit">Save</button>
+            </form>
+            <form method="POST" class="form-box">
+                {% csrf_token %}
+                <input type="hidden" name="delete_pixel" value="1">
+                <button type="submit" class="fake-btn" onclick="return confirm('Una uhakika unataka kufuta Meta Pixel?')">Delete Pixel</button>
+            </form>
+            {% if form %}
+            <h3 style="color: green; text-align: center;">
+                Meta Pixel imewekwa vizuri
+            </h3>
+            {% endif %}
+        </div>
+    </div>
+</div>  
+{% endblock %}

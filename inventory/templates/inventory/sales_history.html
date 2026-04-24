@@ -1,0 +1,53 @@
+{% extends 'website/base.html' %}
+{% block content %}
+{% include 'inventory/nav.html' %}
+{% load humanize %}
+<div class="content-container">
+    <div class="sales-container">
+        <h2> INGIZA DATE RANGE</h2>
+    <div class="history">
+        <form method="get" style="width: 500px;">
+            {% csrf_token %}
+            <label>From</label>
+            <input type="date" name="start_date" value="{{start_date}}">
+            <label>To</label>
+            <input type="date" name="end_date" value="{{end_date}}">
+            <button type="submit" class="edit-btn">Filter</button>
+        </form>
+        <div class="dashboard-container">
+            {% include 'inventory/dashboard.html' %}
+        </div>
+    </div>
+    {% if analytics %}
+        <h2>SALES REGISTER  </h2>
+        <div class="analytics">
+            {% include 'inventory/sales.html' %}
+        </div>
+        <!-- new data passes -->
+        <h2>PRODUCT ANALYTICS</h2>
+        <div class="table-container">
+            <table>
+            <thead>
+                <tr>
+                    <th>Bidhaa</th>
+                    <th>Idadi Sold</th>
+                    <th>Faida</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for item in analytics %}
+                <tr style="text-align: center; vertical-align: middle;">
+                    <td>{{ item.bidhaa__name }}</td>
+                    <td>{{ item.total_sold|intcomma }}</td>
+                    <td>{{ item.total_faida|floatformat:0|intcomma }}</td>
+                </tr>
+            {% endfor %}
+            </table>
+        </div>
+        {% else %}
+            <h2 style="color: red;">Hakuna Data Kwa Sasa</h2>
+        {% endif %}
+        {% include 'inventory/product_analytics.html' %}
+    </div>
+</div>
+{% endblock %}

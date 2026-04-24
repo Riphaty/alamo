@@ -1,0 +1,10 @@
+{% load humanize %}     
+<!-- <p style="color:#009a67;">Today: <strong> {% now "l, d F Y" %}</strong></p> -->
+<div class="dashboard">
+    <p><strong>Jumla ya Mapato: </strong><span style="color: rgb(0, 79, 84);">Tsh {{ total_mapato | floatformat:2 | intcomma }}</span></p> 
+    <p><strong>Jumla ya Matumizi: </strong><span style="color:rgb(0, 79, 84);">Tsh {{ total_matumizi | floatformat:2 | intcomma }}</span><br></p> 
+    <p><strong>Jumla ya Faida: </strong><span style="color: rgb(0, 79, 84);">Tsh {{ total_faida | floatformat:2 | intcomma }}</span><br></p> 
+    <p><strong>Total Units: </strong><span style="color: rgb(0, 79, 84);">{{ total_units | intcomma }} Units</span><br></p> 
+    <p><strong>Stock Value: </strong><span style="color:rgb(0, 79, 84);">Tsh {{ total_stocks | intcomma }}</span></p> 
+    <p><strong>Total Capital: <span style="color:rgb(0, 79, 84);">Tsh {{ theCapital | intcomma }}</span></p> </strong>
+</div>

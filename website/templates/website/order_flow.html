@@ -1,0 +1,73 @@
+{% extends 'website/base.html' %}
+{% load humanize %}
+{% block content %}
+{% include 'website/tool_bar.html' %}
+<div class="content-container">
+
+    <form method="GET" style="margin-bottom: 10px; min-width: 100px;" >
+        <label>Start Date:</label>
+        <input type="date" name="start_date" value="{{ start_date }}">
+
+        <label>End Date:</label>
+        <input type="date" name="end_date" value="{{ end_date }}">
+
+        <button type="submit" class="edit-btn">Filter</button>
+    </form>
+
+    {% if orders %}
+        <h3>Total Orders: {{ total_orders }}</h3>
+        <h3>Confirmed Orders: {{ confirmed_orders }}</h3>
+        <h3>Fake Orders: {{ fake_orders }}</h3>
+        <h3>Percentage Confirmed: {{ percentage_confirmed |floatformat:2 }}%</h3>
+
+        <h1>HIZI HAPA ORDERS ZOTE</h1>
+        <div class="table-container">
+            <table>
+            <thead>
+                <tr>
+                    <th>S/n</th>
+                    <th>Date</th>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Location</th>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Status</th>
+                    <th>Toggle Fake</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for order in orders %}
+                <tr style="text-align: center; vertical-align: middle;">
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ order.created_at }}</td>
+                    <td>{{ order.name }}</td>
+                    <td>{{ order.phone }}</td>
+                    <td>{{ order.location }}</td>
+                    <td>{{ order.product.name }}</td>
+                    <td>{{ order.quantity }}</td>
+                    <td>{{ order.status }}</td>
+                    <td style="display: flex; flex: 1;gap: 15px;justify-content: center;align-items: center;
+                    padding: 0;">
+                        <form method="POST" action="{% url 'set_fake' order.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="fake-btn">Mark as Fake</button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="9" style="text-align:center; color:red;">
+                        Hakuna Orders Hapa
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <p><strong style="color: red;"> Hakuna Orders Hapa</strong></p>
+    {% endif %}
+</div>
+{% endblock %}

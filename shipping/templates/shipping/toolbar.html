@@ -1,0 +1,38 @@
+<div class="side-bar">
+    <div class="icon-container">
+        <a href="{% url 'shipping_home' %}" class="icon-link">
+            <div class="icons"><i class="fa-solid fa-ship"></i><span class="icon-title">Angalia<br>Shipments</span></div>
+        </a>
+    </div>
+    <div class="icon-container">
+        <a href="{% url 'add_shipment' %}" class="icon-link">
+            <div class="icons"><i class="fa-solid fa-add"></i><span class="icon-title">Ingiza<br>Shipment</span></div>
+        </a>
+    </div>
+    <div class="icon-container">
+        <a href="{% url 'products' %}" class="icon-link">
+            <div class="icons"><i class="fa-solid fa-bag-shopping"></i><span class="icon-title">Sajili<br>Products</span></div>
+        </a>
+    </div>
+</div>
+<div class="top-bar">
+    <div class="start">
+        <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+        <div class="manager">
+            <a href="{% url 'admin_panel' %}"><i class="fa-solid fa-globe" style="padding: 10px; font-size: 20px;"></i><span>Website</span></a>
+            <a href="{% url 'sales' %}"><i class="fa-solid fa-coins" style="padding: 10px; font-size: 20px;"></i><span>Sales Manager</span></a>
+        </div>
+    </div>
+    <div class="end">
+        <div class="manager">
+            <a href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket" style="padding: 10px; font-size: 20px;"></i><span>Logout</span></a>
+        </div>
+    </div>
+</div>
+<script>
+function toggleSidebar(){
+    document.body.classList.toggle("sidebar-open");
+}
+</script>
+
+

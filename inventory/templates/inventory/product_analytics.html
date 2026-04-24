@@ -1,0 +1,55 @@
+<h2>PRODUCT ANALYTICS VISUAL</h2>
+<div class="chart">
+    <canvas id="myChart"></canvas>
+    <script>
+        const labels = {{ labels|safe }};
+        const soldData = {{ sold_data|safe }};
+        const faidaData = {{ faida_data|safe }};
+
+        new Chart(document.getElementById('myChart'), {
+            type: 'bar',
+            data: {
+                labels: labels,         
+                datasets: [
+                    {
+                        label: 'IDADI SOLD',
+                        data: soldData,
+                        yAxisID: 'y',
+                        backgroundColor:'#8b7c6d'
+                    },
+                    {
+                        label: 'FAIDA',
+                        data: faidaData,
+                        type: 'bar',   
+                        yAxisID: 'y1',
+                        backgroundColor:'#3d7b6d'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        type: 'linear',
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'IDADI'
+                        }
+                    },
+                    y1: {
+                        type: 'linear',
+                        position: 'right',
+                        grid: {
+                            drawOnChartArea: false  
+                        },
+                        title: {
+                            display: true,
+                            text: 'FAIDA'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</div>

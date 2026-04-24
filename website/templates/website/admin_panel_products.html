@@ -1,0 +1,91 @@
+{% extends 'website/base.html' %}
+{% load humanize %}
+{% block content %}
+{% include 'website/tool_bar.html' %}
+{% if products %}
+<h1 class="title">{{ category.name }}</h1>
+<div class="content-container">
+    {% if message %} 
+        <p style="color: red;">{{ message }}</p>
+    {% endif %}
+    <div class="products-container">
+        {% for product in products %}
+        <div class="product-card">
+            <h3>{{ product.name }}</h3>
+            {% if product.caption %}
+                <p class="product-caption">{{ product.caption }}</p>
+            {% endif %}
+            <div class="product-media">
+                <div class="swiper">
+                    <div class="swiper-wrapper">
+                        {% for img in product.images.all %}
+                            <div class="swiper-slide">
+                                {% if img.is_video %}
+                                <video id="video" class="media " src="{{ img.file.url }}" controls></video>
+                                {% else %}
+                                    <img class="media" src="{{ img.file.url }}" alt="">
+                                {% endif %}
+                            </div>
+                        {% empty %}
+                            <div class="empty">No images available</div>
+                        {% endfor %}
+                    </div>
+                    <div class="swiper-pagination"></div>           
+                    <div class="swiper-button-next"></div>
+                    <div class="swiper-button-prev"></div>
+                </div>
+            </div>
+            <!-- PRICE -->
+            <p class="price">TSh. {{ product.price|intcomma }}/=</p>
+            <div class="product-info">
+                <p>Location: Sinza Mori</p>
+                <p>Delivery: Nchi Nzima</p>
+                <p>Cash on Delivery</p>
+            </div>
+            <div class="action-btn">
+                <a href="{% url 'edit_product' product.id %}" class="edit-btn">Edit</a> 
+                <a href="{% url 'delete_product' product.id %}"><i class="fas fa-trash-alt" style="font-size: 30px;"></i></a>
+            </div>
+            <p>{{product.message}}</p>
+            {% if product.is_available %}
+                <p><span>Status: </span><span style="color: green; margin: 10px 0px 0px; font-weight: bold;">Available</span></p>
+            {% else %}
+                <p><span>Status: </span><span style="color: red; margin: 10px 0px 0px; font-weight: bold;">Out of stock</span></p>
+            {% endif %}
+        </div>
+        {% endfor %}
+
+    </div>
+    </div>
+</div>
+{% endif %}
+<!-- SINGLE VIDEO MODAL (nje ya loop) -->
+<script>
+    document.querySelectorAll('.swiper').forEach((el) => {
+        new Swiper(el, {
+            loop: true,
+            speed: 500,
+            grabCursor: true,
+            pagination: {
+                el: el.querySelector('.swiper-pagination'),
+                clickable: true,
+            },
+            navigation: {
+                nextEl: el.querySelector('.swiper-button-next'),
+                prevEl: el.querySelector('.swiper-button-prev'),
+            },
+        });
+    });
+</script>
+<script>
+const video = document.getElementById("myVideo");
+
+function playVideo() {
+    video.play();
+}
+
+function pauseVideo() {
+    video.pause();
+}
+</script>
+{% endblock %}

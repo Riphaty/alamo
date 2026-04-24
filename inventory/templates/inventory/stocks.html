@@ -1,0 +1,44 @@
+{% extends 'website/base.html' %}
+{% block content %}
+{% include 'inventory/nav.html' %}
+{% load humanize %}
+{% if stocks %}
+<div class="content-container">
+    <div class="sales-container">
+        <h2>Stock Value Tzs: <span style="color: rgb(0, 79, 84);">{{total_stocks | floatformat:2 | intcomma}}</span></h2>
+        <div class="table-container">
+            <table>
+            <thead>
+            <tr>
+                <th>S/N</th>
+                <th>BIDHAA</th>
+                <th>COGS</th>
+                <th>QUANTITY</th>
+                <th>SELLING PRICE</th>
+                <th>MARGIN</th>
+                <th>TOTAL VALUE</th>
+                <th>ACTION</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for stock in stocks %}
+            <tr style="text-align: center; vertical-align: middle;">
+                <td>{{ forloop.counter }}</td>
+                <td>{{ stock.name }}</td>
+                <td>{{ stock.cogs | floatformat:2 | intcomma }}</td>
+                <td>{{ stock.quantity | intcomma }}</td>
+                <td>{{ stock.bei | floatformat:2 | intcomma }}</td>
+                <td>{{ stock.margin |floatformat:2| intcomma }}</td>
+                <td>{{ stock.total_value |floatformat:2| intcomma}}</td>
+                <td><a href="{% url 'edit_stocks' stock.id %}" class="edit-btn">Edit</a>
+            </tr>
+            {% endfor %}
+            </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <h2 style="color: red;padding: 100px 200px;">Hakuna Stocks Kwa Sasa</h2>
+    {% endif %}
+</div>
+{% endblock %}

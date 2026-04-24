@@ -1,0 +1,14 @@
+{% extends 'website/base.html' %}
+{% block content %}
+{% include 'website/tool_bar.html' %}
+<div class="content-container">
+    <div class="sales-container">
+        <form method="POST" class="form-box">
+            {% csrf_token %}
+                <h2>Are you sure you want to delete "<strong>{{ category.name }}</strong>"?<br></h2>
+                <button type="submit" class="fake-btn">Yes, Delete</button>
+                <button type="button" class="edit-btn"><a href="{% url 'admin_panel' %}">Cancel</a></button>
+        </form>
+    </div>
+</div>                              
+{% endblock %}

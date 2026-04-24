@@ -1,0 +1,43 @@
+{% load humanize %}
+{% if sales %}
+<div class="table-container">
+    <table>
+    <thead>
+    <tr>
+        <th>s/n</th>
+        <th>Tarehe</th>
+        <th>Bidhaa</th>
+        <th>Mahali</th>
+        <th>Aina</th>
+        <th>Idadi</th>
+        <th>Makusanyo</th>
+        <th>Matumizi</th>
+        <th>Mapato</th>
+        <th>Faida</th>
+        <th>Status</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for sale in sales %}
+    <tr style="text-align: center; vertical-align: middle;">
+        <td>{{ forloop.counter }}</td>
+        <td>{{ sale.date }}</td>
+        <td>{{ sale.bidhaa }}</td>
+        <td>{{ sale.mahali }}</td>
+        <td>{{ sale.aina }}</td>
+        <td>{{ sale.idadi | intcomma }}</td>
+        <td>{{ sale.makusanyo  |floatformat:2| intcomma }}</td>
+        <td>{{ sale.matumizi |floatformat:2| intcomma }}</td>
+        <td>{{ sale.mapato |floatformat:2| intcomma }}</td>
+        <td>{{ sale.faida |floatformat:2| intcomma }}</td>
+        <td>{{ sale.status}}</td>
+        <td><a href="{% url 'edit_sales' sale.id %}" class="edit-btn">Edit</a> | <a href="{% url 'delete_sales' sale.id %} "><i class="fas fa-trash-alt"></i></a></td>
+    </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+</div>
+{% else %}
+<h2 style="color: red;padding: 100px 200px;">Hakuna Sales Kwa Sasa</h2>
+{% endif %}

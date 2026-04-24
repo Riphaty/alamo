@@ -1,0 +1,14 @@
+{% extends 'website/base.html' %}
+{% block content %}
+{% include 'shipping/toolbar.html' %}
+<div class="content-container">
+    <div class="sales-container">
+        <form method="POST" class="form-box">
+            <h2>MAKE EDITS HERE</h2>
+            {% csrf_token %}
+            {{edit_shipment}}
+            <button type="submit" class="edit-btn">Save</button>
+        </form>
+    </div>
+</div>
+{% endblock %}     

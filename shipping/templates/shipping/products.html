@@ -1,0 +1,43 @@
+{% extends 'website/base.html' %}
+{% block content %}
+{% include 'shipping/toolbar.html' %}
+{% load humanize %}
+<div class="content-container">
+    <div class="sales-container">
+        <h2>SAJILI PRODUCTS ZA KUAGIZA</h2>
+        <form method="POST" class="sajili-kwanza">
+            {% csrf_token %}
+            {{ form }}
+            <button type="submit" id="submit" class="edit-btn">Add Product</button>
+        </form>
+        {% if products %}
+            <h2>PRODUCTS ZILIZO SAJILIWA</h2>
+            <table>
+            <thead>
+                <tr>
+                    <th>S/n</th>
+                    <th>Name</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr style="text-align: center; vertical-align: middle;">
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ product.name }}</td>
+                    <td>
+                        <div class="action-btns">
+                            <a href="{% url 'edit_products' product.id %}" class="edit-btn">Edit</a>  
+                            <a href="{% url 'delete_products' product.id %} "><i class="fas fa-trash-alt"></i></a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+        {% else %}
+        <h2 style="color: red; padding: 100px 200px;">Hakuna Products Kwa Sasa</h2>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

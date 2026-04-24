@@ -1,0 +1,69 @@
+{% extends 'website/base.html' %}
+{% block content %}
+{% load humanize %}
+{% include 'shipping/toolbar.html' %}
+<div class="content-container">
+    <div class="sales-container">
+        {% if shipment %}
+            <h1>HIZI HAPA SHIPMENT ZOTE</h1>
+            <div class="dashboard">
+                <p><strong>Shipping capital TZS: <span style="color: #009a67;">{{ total_capital | floatformat:2 | intcomma }}/=</span></strong></p>
+                <p><strong>Total Expected shipping cost TZS: <span style="color: #009a67;">{{ total_shipping_cost | floatformat:2 | intcomma }}/=</strong></span></p>
+            </div>
+            {% load humanize %}
+            <div class="table-container">
+                <table>
+                <thead>
+                <tr>
+                    <th>s/n</th>
+                    <th>Product</th>
+                    <th>Ordered Date</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Cbm</th>
+                    <th>Shipping Fee(USD)</th>
+                    <th>Shipping Fee (TZS)</th>
+                    <th>Shipped Date</th>
+                    <th>Delivery Date</th>
+                    <th>Usafiri Ndani</th>
+                    <th>Total Cogs</th>
+                    <th>Unit Cost</th>
+                    <th>Time Used</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for ship in shipment %}
+                    <tr style="text-align: center; vertical-align: middle;">
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ ship.product.name }}</td>
+                        <td>{{ ship.payment_date }}</td>
+                        <td>{{ ship.quantity | intcomma }}</td>
+                        <td>{{ ship.price |floatformat:2| intcomma }}</td>
+                        <td>{{ ship.cbm }}</td>
+                        <td>{{ ship.shipping_price_usd |floatformat:2| intcomma }}</td>
+                        <td>{{ ship.shipping_price_tzs |floatformat:2| intcomma }}</td>
+                        <td>{{ ship.shipped_date }}</td>
+                        <td>{{ ship.delivery_date }}</td>
+                        <td>{{ ship.usafiri_ndani |floatformat:2| intcomma }}</td>
+                        <td>{{ ship.total_cogs |floatformat:2| intcomma }}</td>
+                        <td>{{ ship.unit_cogs |floatformat:2| intcomma }}</td>
+                        <td>{{ ship.time_used }} Days</td>
+                        <td>{{ ship.status }}</td>
+                        <td>
+                            <a href="{% url 'edit_shipment' ship.id %}" class="edit-btn">Edit</a>  
+                            <a href="{% url 'delete_shipment' ship.id %} "><i class="fas fa-trash-alt"></i></a>
+                        </td>
+                    </tr> 
+                {% endfor %}
+                </tbody>
+                </table>
+            {% else %}
+                <h2 style="color: red; padding: 70px;">Hakuna Shipment Kwa sasa</h2>
+            {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+ 

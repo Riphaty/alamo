@@ -1,0 +1,33 @@
+{% load static %}
+{% block content %}
+<div class="content-container">
+    {% if categories %}
+        <h1 class="title">ALAMO ELECTRONICS</h1>
+        <div class="category-container">
+            {% for category in categories %}
+            <div class="category">
+                <div class="category-name">
+                    <h2>{{ category.name }}</h2>
+                </div>
+                <div class="thumbnail">
+                    {% if category.thumbnail %}
+                        <a href="{% url 'admin_panel_products' category.slug %}" class="category-link">
+                        <img src="{{ category.thumbnail.url }}" class="thumbnail">
+                        </a>
+                    {% endif %}
+                </div>
+                <div class="category-description">
+                    <p>{{ category.description }}</p>
+                </div>  
+                <div class="action-btn">
+                    <a href="{% url 'edit_category' category.id %}" class="edit-btn">Edit</a>
+                    <a href="{% url 'delete_category' category.id %}" ><i class="fas fa-trash-alt" style="font-size: 30px;"></i></a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <h2 style="color: red;display: flex;justify-content: center;align-items: center;margin-top: 80px;z-index: 10;">Hakuna Bidhaa yoyote kwa sasa</h2>
+    {% endif %}
+</div>
+{% endblock %}

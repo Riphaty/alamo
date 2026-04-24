@@ -1,0 +1,15 @@
+{% extends 'website/base.html' %}
+{% block content %}
+{% include 'inventory/nav.html' %}
+<div class="content-container">
+    <div class="sales-container">
+        <form action="" method="POST" class="form-box">
+            <h1>INGIZA STOCK HAPA</h1>
+            {% csrf_token %}
+            {{add_stocks}}
+            <br>
+            <button type="submit" id="submit" class="edit-btn">Submit</button>   
+        </form>
+    </div>
+</div>
+{% endblock %}

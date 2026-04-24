@@ -1,0 +1,14 @@
+{% extends 'website/base.html' %}
+{% block content %}
+{% include 'inventory/nav.html' %}
+<div class="content-container">
+    <div class="sales-container">
+        <form class="delete-box" method="POST">
+            {% csrf_token %}
+            <h2>Je unataka kufuta <strong>{{delete_stocks}}</strong>, <strong>{{delete_stocks.quantity}} Pcs?</strong><br></h2>
+            <button type="submit" class="fake-btn">Yes, Delete</button>  
+            <button class="edit-btn" type="button" id="delete_button"><Cancel href="{% url 'stocks' %}">Cancel</button></a>
+        </form>
+    </div>
+</div>
+{% endblock %}

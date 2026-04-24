@@ -1,0 +1,28 @@
+{% extends 'website/base.html' %}
+{% block content %}
+<div class="page">
+    <h2 style="color: white;">Ingiza Taarifa Hapa Kutuma Order</h2>
+    <form class="order-form" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <input type="hidden" name="product_id" value="{{ product.id }}">
+        <input type="hidden" name="product_name" value="{{ product.name }}">
+
+        <label for="name">Jina:</label>
+        <input class="input" type="text" name="name" id="name" placeholder="Jina" required>
+
+        <label for="phone">Namba ya Simu:</label>
+        <input class="input" type="tel" id="phone" name="phone" placeholder="0712345678" required>
+
+        <label for="location">Location:</label>
+        <input class="input" type="text" name="location" id="location" placeholder="Location" required>
+        
+        <label for="quantity">Quantity:</label>
+        <input class="input" type="number" name="quantity" id="quantity" min="1" required>
+
+        <button class="order-btn" type="submit">
+           <strong style="color: white; font-family:Inter;font-size: 20px;">Order {{ product.name }}</strong> 
+        </button>
+    </form>
+</div>
+{% endblock %}

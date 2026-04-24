@@ -1,0 +1,67 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'website/css/main.css' %}">
+    <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <title>Alamo Electonics</title>
+    {% if site_settings and site_settings.meta_pixel %}
+        {{ site_settings.meta_pixel|safe }}
+    {% endif %}
+
+</head>
+<body>
+    {% block content %}
+    {% endblock %}
+    <a href="#" class="wa-float" >
+        <i class="fab fa-whatsapp" id="waBtn"></i>
+    </a>
+    <div class="wa-popup" id="waPopup">
+        <div class="wa-popup-header">
+            Wasiliana Nasi
+        </div>
+    <div class="wa-popup-body">
+        <p>Unahitaji Msaada? Wasiliana Nasi WhatsApp.</p>
+
+        <a href="https://wa.me/255686705556" target="_blank">
+            Fungua WhatsApp
+        </a>
+        <a href="tel:+255656123248" class="call-btn">
+        Piga Simu
+    </a>
+    </div>
+
+</div>
+<script>
+    const waBtn = document.getElementById("waBtn");
+    const waPopup = document.getElementById("waPopup");
+
+    waBtn.addEventListener("click", function(e) {
+        e.preventDefault();
+
+        if (waPopup.style.display === "block") {
+            waPopup.style.display = "none";
+        } else {
+            waPopup.style.display = "block";
+        }
+    });
+
+    // close when clicking outside
+    document.addEventListener("click", function(e) {
+        if (!waPopup.contains(e.target) && e.target !== waBtn) {
+            waPopup.style.display = "none";
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+{% extends 'website/base.html' %}
+{% block content %}
+{% include 'inventory/nav.html' %}
+<div class="content-container">
+    <div class="sales-container">
+        {% if pending_sales %}
+            {% load humanize %}
+            <H1>{{idadi}} ITEM(S) ZIKO PENDING</H1>
+            <div class="table-container">
+                <table>
+                <thead>
+                <tr>
+                    <th>s/n</th>
+                    <th>Tarehe</th>
+                    <th>Bidhaa</th>
+                    <th>Mahali</th>
+                    <th>Aina</th>
+                    <th>Idadi</th>
+                    <th>Makusanyo</th>
+                    <th>Matumizi</th>
+                    <th>Mapato</th>
+                    <th>Faida</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for pending_sale in pending_sales %}
+                <tr style="text-align: center; vertical-align: middle;">
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ pending_sale.date }}</td>
+                    <td>{{ pending_sale.bidhaa }}</td>
+                    <td>{{ pending_sale.mahali }}</td>
+                    <td>{{ pending_sale.aina }}</td>
+                    <td>{{ pending_sale.idadi | intcomma }}</td>
+                    <td>{{ pending_sale.makusanyo  |floatformat:2| intcomma }}</td>
+                    <td>{{ pending_sale.matumizi |floatformat:2| intcomma }}</td>
+                    <td>{{ pending_sale.mapato |floatformat:2| intcomma }}</td>
+                    <td>{{ pending_sale.faida |floatformat:2| intcomma }}</td>
+                    <td>{{ pending_sale.status }}</td>
+                    <td>
+                        <div class="button_space">
+                        <a href="{% url 'edit_pending_sales' pending_sale.id %} " class="edit-btn">PAID</a> | 
+                        <a href="{% url 'canceled' pending_sale.id %}" class="fake-btn" id="fake-btn">CANCELED</a>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+                </table>
+            {% else %}
+            <h2 style="color: red;margin: 100px 0px 0px 150px;">Hakuna Pending Sales Kwa Sasa</h2>
+            {% endif %}
+        </div>
+        {% endblock %}
+    </div>
+</div>

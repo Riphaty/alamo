@@ -1,0 +1,30 @@
+{% extends 'website/base.html' %}
+{% block content %}
+{% include 'website/tool_bar.html' %}
+<div class="content-container">
+    <div class="sales-container">
+        <form method="POST" enctype="multipart/form-data" class="form-box">
+            {% csrf_token %}
+            <h2>Edit Category</h2>
+
+            <label>Name</label>
+            <input type="text" name="name" value="{{ edit_category.name }}" required>
+
+            <label>Current Thumbnail</label>
+            {% if edit_category.thumbnail %}
+                <img src="{{ edit_category.thumbnail.url }}" style="width:300px; display: block; margin: 0 auto;" >
+            {% else %}
+                <p>No image</p>
+            {% endif %}<br><br>
+
+            <label for="thumbnail" class="edit-btn" id="add-btn" style="display: inline-block;">Upload Thumbnail</label>
+            <input type="file" id="thumbnail" name="thumbnail" accept="image/*"><br>
+
+            <label>Description</label>
+            <textarea name="description" id="description">{{ edit_category.description }}</textarea>
+
+            <button type="submit" class="edit-btn">Save Changes</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

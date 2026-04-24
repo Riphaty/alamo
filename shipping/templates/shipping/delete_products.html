@@ -1,0 +1,14 @@
+{% extends 'website/base.html' %}
+{% block content %}
+{% include 'shipping/toolbar.html' %}
+<div class="content-container">
+    <div class="sales-container">
+        <form action="" method="POST" class="form-box">
+            {% csrf_token %}
+        <h2>Je Unataka kufuta <strong>{{product.name}}</strong>?</h2><br> 
+        <button type="submit" class="fake-btn">Yes, Delete</button>  
+        <a href="{% url 'products' %}"><button type="button"  class="edit-btn">Cancel</button></a>
+        </form>
+    </div>
+</div>
+{% endblock %}
