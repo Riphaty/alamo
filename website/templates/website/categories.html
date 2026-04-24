@@ -12,6 +12,7 @@
                 <div class="thumbnail">
                     {% if category.thumbnail %}
                         <a href="{% if category.slug %}{% url 'products' category.slug %}{% endif %}">
+                        <p>{{ category.thumbnail.url }}</p>
                         <img src="{{ category.thumbnail.url }}">
                         </a>    
                     {% endif %}
