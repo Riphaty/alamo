@@ -1,11 +1,12 @@
 from django.utils.text import slugify
 from django.db import models
 from django.core.validators import MinValueValidator,MaxValueValidator
+from cloudinary_storage import MediaCloudinaryStorage
 
 # Create your models here.
 class Category(models.Model):
     name=models.CharField(max_length=100)
-    thumbnail=models.ImageField(upload_to='categories/')
+    thumbnail=models.ImageField(upload_to='categories/',storage=MediaCloudinaryStorage(),blank=True,null=True)
     description=models.TextField(blank=True,null=True)
     category_view=models.PositiveBigIntegerField(default=0)
     slug=models.SlugField(unique=True)
@@ -34,7 +35,7 @@ class Product(models.Model):
 
 class ProductImage(models.Model):
     product=models.ForeignKey(Product,on_delete=models.CASCADE,related_name='images')
-    file=models.FileField(upload_to='products/')
+    file=models.FileField(upload_to='products/',storage=MediaCloudinaryStorage(),blank=True,null=True)
     def is_video(self):
         return self.file.name.lower().endswith(('.mp4','.webm', '.ogg'))
     def __str__(self):

@@ -42,13 +42,13 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
     'django.contrib.humanize',
     'website',
     'inventory',
     'shipping',
-    'cloudinary',
     'cloudinary_storage',
+    'cloudinary',
+    'django.contrib.staticfiles',
 ]
 
 MIDDLEWARE = [
@@ -130,13 +130,24 @@ STATIC_URL = 'static/'
 cloudinary.config(
     secure=True )
 
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
 
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
     'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
     'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
 }
+
+STORAGES={
+    "default":{
+        "BACKEND":"cloudinary_storage.storage.MediaCloudinaryStorage"
+    },
+    "staticfiles":{
+        "BACKEND":"whitenoise.storage.CompressedManifestStaticFilesStorage"
+    }
+}
+MEDIA_URL= 'cloudinary://<498253397725823>:<UnczJM_9CTEPVHozpGGgIhJix7A>@dkewkxvie'
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
