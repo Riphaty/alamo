@@ -146,7 +146,7 @@ STORAGES={
         "BACKEND":"whitenoise.storage.CompressedManifestStaticFilesStorage"
     }
 }
-MEDIA_URL= 'cloudinary://<498253397725823>:<UnczJM_9CTEPVHozpGGgIhJix7A>@dkewkxvie'
+MEDIA_URL= 'cloudinary://<498253397725823>:<UnczJM_9CTEPVHozpGGgIhJix7A>@dkewkxvie/'
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Default primary key field type
