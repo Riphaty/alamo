@@ -29,7 +29,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["*"]                                   
 
@@ -146,7 +146,7 @@ STORAGES={
         "BACKEND":"whitenoise.storage.CompressedManifestStaticFilesStorage"
     }
 }
-MEDIA_URL= 'cloudinary://<498253397725823>:<UnczJM_9CTEPVHozpGGgIhJix7A>@dkewkxvie/'
+MEDIA_URL= '/media'
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Default primary key field type
