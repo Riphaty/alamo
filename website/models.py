@@ -1,7 +1,7 @@
 from django.utils.text import slugify
 from django.db import models
 from django.core.validators import MinValueValidator,MaxValueValidator
-from cloudinary_storage import MediaCloudinaryStorage
+from cloudinary_storage.storage import MediaCloudinaryStorage
 
 # Create your models here.
 class Category(models.Model):
