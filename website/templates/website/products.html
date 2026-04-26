@@ -4,8 +4,7 @@
 {% if products %}
     <h1 class="title">{{ category.name }}</h1>
     <div class="products-container">
-        <p>We are debugging</p>
-        <!-- {% for product in products %}
+        {% for product in products %}
         <div class="product-card">
             <h3 class="product-title">{{ product.name }}</h3>
             {% if product.caption %}
@@ -14,7 +13,7 @@
             <div class="product-media">
                 <div class="swiper">
                     <div class="swiper-wrapper">
-                        {% for img in product.images.all %}
+                        <!-- {% for img in product.images.all %}
                         <div class="swiper-slide">
                             {% if img.is_video %}
                             <video class="media" id="video" src="{{ img.file.url }}" controls></video>
@@ -24,6 +23,9 @@
                         </div>
                         {% empty %}
                         <div class="empty">No images available</div>
+                        {% endfor %} -->
+                        {% for img in product.images.all %}
+                            <p>File object: {{ img.file }}</p>
                         {% endfor %}
                     </div>
                     <div class="swiper-pagination"></div>
@@ -43,7 +45,7 @@
             <button class="order-btn disabled" disabled>Out of Stock</button>
             {% endif %}
         </div>
-        {% endfor %} -->
+        {% endfor %}
     </div>
 {% else %}
     <h2 style="color: red;display: flex;justify-content: center;align-items: center;">Hakuna Bidhaa yoyote kwa sasa</h2>
