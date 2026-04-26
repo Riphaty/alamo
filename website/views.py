@@ -112,7 +112,7 @@ def add_product(request):
             if media_data:
                 import json
                 for m in json.loads(media_data):
-                    ProductImage.objects.create(
+                    ProductMedia.objects.create(
                         product=product,
                         product_url=m.get('url'),
                         product_media_type=m.get('type'),
@@ -142,7 +142,7 @@ def edit_product(request, product_id):
             import json
             product.images.all().delete()
             for m in json.loads(media_data):
-                ProductImage.objects.create(
+                ProductMedia.objects.create(
                     product=product,
                     product_url=m.get('url'),
                     product_media_type=m.get('type'),
