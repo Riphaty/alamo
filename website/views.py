@@ -8,6 +8,7 @@ from django.db.models import F
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from decimal import Decimal
+import cloudinary.uploader
 
 # Create your views here.
 #Admin Panel Ziko Hapa
