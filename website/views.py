@@ -15,18 +15,10 @@ from django.contrib.auth import logout
 def add_category(request):
     if request.method=='POST':
         name=request.POST.get('name')
+        thumbnail=request.FILES.get('thumbnail')
         description=request.POST.get('description')
-
-        # 🔧 FIXED (Cloudinary-style fields)
-        Category.objects.create(
-            name=name,
-            description=description,
-            thumbnail_url=request.POST.get('thumbnail_url'),
-            media_type=request.POST.get('thumbnail_type','image'),
-            public_id=request.POST.get('thumbnail_public_id','')
-        )
+        Category.objects.create(name=name,thumbnail=thumbnail,description=description)
         return redirect('admin_panel')
-
     context={
         'message':'Category created successfully'
         }
@@ -35,18 +27,13 @@ def add_category(request):
 @login_required
 def edit_category(request, category_id):
     category = Category.objects.get(id=category_id)
-
     if request.method == 'POST':
         category.name = request.POST.get('name')
         category.description = request.POST.get('description')
-
-        # 🔧 FIXED (no FILES usage)
-        if request.POST.get('thumbnail_url'):
-            category.thumbnail_url = request.POST.get('thumbnail_url')
-
+        if request.FILES.get('thumbnail'):
+            category.thumbnail = request.FILES.get('thumbnail')
         category.save()
         return redirect('admin_panel')
-
     context = {
         'edit_category': category,
         'message': 'Category updated successfully'
@@ -88,23 +75,24 @@ def admin_panel_products(request, slug):
              }
     return render(request, 'website/admin_panel_products.html',context)
 
-# =========================
-# PRODUCTS (FIXED)
-# =========================
-
+#Admin-Products
 @login_required
 def add_product(request):
     categories = Category.objects.all()
-
     if request.method == 'POST':
         category_id = request.POST.get('category')
         name = request.POST.get('name')
         price = request.POST.get('price')
         caption = request.POST.get('caption')
         is_available = request.POST.get('is_available') == 'on'
-
+        files = request.FILES.getlist('images')
+        if not name or not price:
+            return render(request, 'website/add_product.html', {
+                'categories': categories,
+                'message': 'Jaza taarifa zote muhimu'
+            })
         category = get_object_or_404(Category, id=category_id)
-
+        ALLOWED_EXTENSIONS = ('.jpg', '.jpeg', '.png', '.webp', '.mp4', '.webm')
         with transaction.atomic():
             product = Product.objects.create(
                 category=category,
@@ -114,29 +102,16 @@ def add_product(request):
                 is_available=is_available
             )
 
-            # 🔧 FIXED MEDIA (Cloudinary JSON pipeline)
-            media_data = request.POST.get('media_data')
-
-            if media_data:
-                import json
-                for m in json.loads(media_data):
-                    ProductImage.objects.create(
-                        product=product,
-                        product_url=m.get('url'),
-                        product_media_type=m.get('type'),
-                        product_public_id=m.get('public_id')
-                    )
-
+            for f in files:
+                if f.name.lower().endswith(ALLOWED_EXTENSIONS):
+                    ProductImage.objects.create(product=product, file=f)
         return redirect('admin_panel')
-
     return render(request, 'website/add_product.html', {'categories': categories})
-
 
 @login_required
 def edit_product(request, product_id):
     product = Product.objects.get(id=product_id)
     categories = Category.objects.all()
-
     if request.method == 'POST':
         category_id = request.POST.get('category')
         product.category = Category.objects.get(id=category_id)
@@ -145,31 +120,13 @@ def edit_product(request, product_id):
         product.caption = request.POST.get('caption')
         product.is_available = request.POST.get('is_available') == 'on'
         product.save()
-
-        # 🔧 FIXED MEDIA (replace old media safely)
-        media_data = request.POST.get('media_data')
-
-        if media_data:
-            import json
-            product.images.all().delete()
-
-            for m in json.loads(media_data):
-                ProductImage.objects.create(
-                    product=product,
-                    product_url=m.get('url'),
-                    product_media_type=m.get('type'),
-                    product_public_id=m.get('public_id')
-                )
-
-        return redirect('admin_panel_products', slug=product.category.slug)
-
+        return redirect('admin_panel_products')
     context = {
         'edit_product': product,
         'categories': categories,
         'message': 'Product updated successfully'
     }
     return render(request, 'website/edit_product.html', context)
-
 
 @login_required
 def delete_product(request, product_id):
@@ -238,7 +195,7 @@ def order(request, product_id):
         send_mail(
         subject=f"NEW ORDER - {product.name}",
         message=message,
-        from_email=None,
+        from_email=None,  # uses EMAIL_HOST_USER
         recipient_list=["riphatymkude96@outlook.com"],
         fail_silently=False,
         )
