@@ -205,13 +205,6 @@ def edit_product(request, product_id):
 
                 except Exception as e:
                     print("Upload failed:", e)
-
-                # 🔥 OPTION 2: Local/Default storage (ukitaka)
-                # ProductImage.objects.create(
-                #     product=product,
-                #     file=f
-                # )
-
         return redirect('admin_panel_products', slug=product.category.slug)
 
     return render(request, 'website/edit_product.html', {

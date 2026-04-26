@@ -19,11 +19,11 @@
 
                                 {% if media.is_video %}
                                     <video class="media" controls>
-                                        <source src="{{ img.file.url }}" type="video/mp4">
+                                        <source src="{{ media.file.url }}" type="video/mp4">
                                     </video>
 
                                 {% else %}
-                                    <img class="media" src="{{ img.file.url }}" alt="">
+                                    <img class="media" src="{{ media.file.url }}" alt="">
                                 {% endif %}
 
                             </div>
