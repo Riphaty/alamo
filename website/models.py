@@ -37,7 +37,13 @@ class ProductImage(models.Model):
     product=models.ForeignKey(Product,on_delete=models.CASCADE,related_name='images')
     file = CloudinaryField('auto', blank=True, null=True)
     def is_video(self):
-        return self.file.name.lower().endswith(('.mp4','.webm', '.ogg'))
+        if not self.file:
+            return False
+        try:
+            return "video" in self.file.resource_type
+        except:
+            return False
+    
     def __str__(self):
         return f'Picha za {self.product.name}'
     
