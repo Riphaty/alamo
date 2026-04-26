@@ -81,6 +81,7 @@ def admin_panel_products(request, slug):
 @login_required
 def add_product(request):
     categories = Category.objects.all()
+
     if request.method == 'POST':
         category_id = request.POST.get('category')
         name = request.POST.get('name')
@@ -88,13 +89,17 @@ def add_product(request):
         caption = request.POST.get('caption')
         is_available = request.POST.get('is_available') == 'on'
         files = request.FILES.getlist('images')
+
         if not name or not price:
             return render(request, 'website/add_product.html', {
                 'categories': categories,
                 'message': 'Jaza taarifa zote muhimu'
             })
+
         category = get_object_or_404(Category, id=category_id)
+
         ALLOWED_EXTENSIONS = ('.jpg', '.jpeg', '.png', '.webp', '.mp4', '.webm')
+
         with transaction.atomic():
             product = Product.objects.create(
                 category=category,
@@ -105,10 +110,21 @@ def add_product(request):
             )
 
             for f in files:
-                if f.name.lower().endswith(ALLOWED_EXTENSIONS):
-                    ProductImage.objects.create(product=product, file=f)
-        return redirect('admin_panel')
-    return render(request, 'website/add_product.html', {'categories': categories})
+                ext = os.path.splitext(f.name)[1].lower()
+
+                if ext not in ALLOWED_EXTENSIONS:
+                    continue  # skip bad files quietly (or return error if you want)
+
+                ProductImage.objects.create(
+                    product=product,
+                    file=f
+                )
+
+        return redirect('home')  # change to your actual page
+
+    return render(request, 'website/add_product.html', {
+        'categories': categories
+    })
 
 @login_required
 def edit_product(request, product_id):

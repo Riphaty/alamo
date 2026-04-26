@@ -33,20 +33,19 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+
 class ProductImage(models.Model):
-    product=models.ForeignKey(Product,on_delete=models.CASCADE,related_name='images')
-    file = CloudinaryField('auto', blank=True, null=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
+    file = CloudinaryField(resource_type="auto", blank=True, null=True)
+
     def is_video(self):
         if not self.file:
             return False
-        try:
-            return "video" in self.file.resource_type
-        except:
-            return False
-    
+        return self.file.resource_type == "video"
+
     def __str__(self):
         return f'Picha za {self.product.name}'
-    
+        
 class Order(models.Model):
     STATUS_CHOICES = [
         ('Confirmed', 'Confirmed'),
