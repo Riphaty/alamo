@@ -114,24 +114,47 @@ def edit_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     categories = Category.objects.all()
     if request.method == 'POST':
+        # BASIC FIELDS
         product.category = get_object_or_404(Category, id=request.POST.get('category'))
         product.name = request.POST.get('name', '').strip()
         product.caption = request.POST.get('caption', '').strip()
+        # PRICE SAFE
         try:
             product.price = Decimal(request.POST.get('price', 0))
         except:
             product.price = Decimal('0')
+
         product.is_available = bool(request.POST.get('is_available'))
+
         product.save()
+
+        # =========================
+        # 🔥 SAFE MOBILE UPLOAD FIX
+        # =========================
         images = request.FILES.getlist('images')
+
         if images:
+            # optional: clear old images
             product.images.all().delete()
+
             for img in images:
+                # basic validation (mobile safe)
+                if not img:
+                    continue
+
+                if not img.content_type.startswith('image/'):
+                    continue
+
+                if img.size > 5 * 1024 * 1024:  # 5MB limit
+                    continue
+
                 ProductImage.objects.create(
                     product=product,
                     file=img
                 )
+
         return redirect('admin_panel_products', slug=product.category.slug)
+
     return render(request, 'website/edit_product.html', {
         'edit_product': product,
         'categories': categories
