@@ -7,6 +7,7 @@ from datetime import datetime, date
 from django.db.models import F
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
+from decimal import Decimal
 
 # Create your views here.
 #Admin Panel Ziko Hapa
@@ -110,24 +111,38 @@ def add_product(request):
 
 @login_required
 def edit_product(request, product_id):
-    product = Product.objects.get(id=product_id)
+    product = get_object_or_404(Product, id=product_id)
     categories = Category.objects.all()
     if request.method == 'POST':
         category_id = request.POST.get('category')
-        product.category = Category.objects.get(id=category_id)
+        # SAFE RELATION HANDLING
+        product.category = get_object_or_404(Category, id=category_id)
+
+        # BASIC FIELDS
         product.name = request.POST.get('name')
-        product.price = request.POST.get('price')
         product.caption = request.POST.get('caption')
-        product.is_available = request.POST.get('is_available') == 'on'
+
+        # SAFE PRICE HANDLING
+        price = request.POST.get('price')
+        try:
+            product.price = Decimal(price)
+        except:
+            product.price = Decimal('0')
+
+        # CHECKBOX SAFELY HANDLED
+        product.is_available = bool(request.POST.get('is_available'))
+
         product.save()
+
         return redirect('admin_panel_products')
+
     context = {
         'edit_product': product,
         'categories': categories,
-        'message': 'Product updated successfully'
+        'message': 'Product loaded successfully'
     }
-    return render(request, 'website/edit_product.html', context)
 
+    return render(request, 'website/edit_product.html', context)
 @login_required
 def delete_product(request, product_id):
     product = Product.objects.get(id=product_id)

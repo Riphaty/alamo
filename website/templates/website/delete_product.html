@@ -7,7 +7,7 @@
             {% csrf_token %}
             <h2>Are you sure you want to delete "<strong>{{ product.name }}</strong>"?</h2>
             <button type="submit" class="fake-btn">Yes, Delete</button>
-            <button type="button" class="edit-btn"><a href="{% url 'admin_panel' %}">Cancel</a></button>
+            <button type="button" class="edit-btn"><a href="{% url 'admin_panel_products' %}">Cancel</a></button>
         </form>
     </div>
 </div>
