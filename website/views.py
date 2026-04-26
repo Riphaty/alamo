@@ -149,7 +149,7 @@ def delete_product(request, product_id):
 
     if request.method == 'POST':
         product.delete()
-        return redirect('admin_panel_products')
+        return redirect('admin_panel_products', slug=product.category.slug)
 
     return render(request, 'website/delete_product.html', {
         'product': product
