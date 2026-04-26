@@ -4,13 +4,13 @@
 {% if products %}
     <h1 class="title">{{ category.name }}</h1>
     <div class="products-container">
-        {% for product in products %}
+        <p>We are debugging</p>
+        <!-- {% for product in products %}
         <div class="product-card">
             <h3 class="product-title">{{ product.name }}</h3>
             {% if product.caption %}
             <p class="product-caption">{{ product.caption }}</p>
             {% endif %}
-            <!-- SWIPER -->
             <div class="product-media">
                 <div class="swiper">
                     <div class="swiper-wrapper">
@@ -26,7 +26,6 @@
                         <div class="empty">No images available</div>
                         {% endfor %}
                     </div>
-                    <!-- controls INSIDE swiper (important) -->
                     <div class="swiper-pagination"></div>
                     <div class="swiper-button-next"></div>
                     <div class="swiper-button-prev"></div>
@@ -44,7 +43,7 @@
             <button class="order-btn disabled" disabled>Out of Stock</button>
             {% endif %}
         </div>
-        {% endfor %}
+        {% endfor %} -->
     </div>
 {% else %}
     <h2 style="color: red;display: flex;justify-content: center;align-items: center;">Hakuna Bidhaa yoyote kwa sasa</h2>
