@@ -140,10 +140,13 @@ def edit_product(request, product_id):
 @login_required
 def delete_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
-    category_slug = product.category.slug 
+
+    category_slug = product.category.slug
+
     if request.method == 'POST':
         product.delete()
         return redirect('admin_panel_products', slug=category_slug)
+
     return render(request, 'website/delete_product.html', {
         'product': product
     })
