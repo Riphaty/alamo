@@ -1,272 +1,323 @@
 from django.db import transaction
 from django.http import HttpResponse
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render,redirect,get_object_or_404
 from website.models import *
 from django.core.mail import send_mail
-from datetime import date
+from datetime import datetime, date
 from django.db.models import F
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
-from decimal import Decimal
-import cloudinary.uploader
-import json
-import os
 
-
-# =========================
-# ADMIN PANEL
-# =========================
-
-@login_required
-def admin_panel(request):
-    categories = Category.objects.all()
-    return render(request, 'website/admin_panel.html', {'categories': categories})
-
-
-@login_required
-def admin_panel_category(request):
-    categories = Category.objects.all()
-    return render(request, 'website/admin_panel_categories.html', {'categories': categories})
-
-
-@login_required
-def admin_panel_products(request, slug):
-    category = get_object_or_404(Category, slug=slug)
-    products = Product.objects.filter(category=category).order_by('name')
-
-    return render(request, 'website/admin_panel_products.html', {
-        'products': products,
-        'category': category
-    })
-
-
-# =========================
-# CATEGORY (CLOUDINARY)
-# =========================
-
+# Create your views here.
+#Admin Panel Ziko Hapa
+#Admin-Categories
 @login_required
 def add_category(request):
-    if request.method == 'POST':
+    if request.method=='POST':
+        name=request.POST.get('name')
 
+        # 🔧 FIX: removed FILES dependency (Cloudinary consistency)
         Category.objects.create(
-            name=request.POST.get('name'),
-            description=request.POST.get('description'),
+            name=name,
             thumbnail_url=request.POST.get('thumbnail_url'),
-            media_type=request.POST.get('thumbnail_type', 'image'),
-            public_id=request.POST.get('thumbnail_public_id', '')
+            media_type=request.POST.get('thumbnail_type','image'),
+            public_id=request.POST.get('thumbnail_public_id',''),
+            description=request.POST.get('description')
         )
-
         return redirect('admin_panel')
 
-    return render(request, 'website/add_category.html')
-
+    context={
+        'message':'Category created successfully'
+        }
+    return render(request,'website/add_category.html',context)    
 
 @login_required
 def edit_category(request, category_id):
-    category = get_object_or_404(Category, id=category_id)
-
+    category = Category.objects.get(id=category_id)
     if request.method == 'POST':
-
         category.name = request.POST.get('name')
         category.description = request.POST.get('description')
 
-        thumbnail_url = request.POST.get('thumbnail_url')
-        if thumbnail_url:
-            category.thumbnail_url = thumbnail_url
+        # 🔧 FIX: no FILES usage
+        if request.POST.get('thumbnail_url'):
+            category.thumbnail_url = request.POST.get('thumbnail_url')
 
         category.save()
         return redirect('admin_panel')
-
-    return render(request, 'website/edit_category.html', {
-        'edit_category': category
-    })
-
+    context = {
+        'edit_category': category,
+        'message': 'Category updated successfully'
+    }
+    return render(request, 'website/edit_category.html', context)
 
 @login_required
 def delete_category(request, category_id):
-    category = get_object_or_404(Category, id=category_id)
-
+    category = Category.objects.get(id=category_id)
     if request.method == 'POST':
         category.delete()
         return redirect('admin_panel')
+    context = {
+        'category': category
+    }
+    return render(request, 'website/delete_category.html', context)    
+ 
 
-    return render(request, 'website/delete_category.html', {'category': category})
+#Admin Panel 
+@login_required
+def admin_panel(request):
+    categories=Category.objects.all()
+    context={'categories':categories}
+    return render(request, 'website/admin_panel.html',context)
 
+@login_required
+def admin_panel_category(request):
+    categories=Category.objects.all()
+    context={'categories':categories}
+    return render(request, 'website/admin_panel_categories.html',context)
 
-# =========================
-# PRODUCTS (CLOUDINARY JSON PIPELINE)
-# =========================
+@login_required
+def admin_panel_products(request, slug):
+    category=get_object_or_404(Category, slug=slug)
+    products=Product.objects.filter(category=category).order_by('name')
+    context={
+        'products':products,
+        'category':category
+             }
+    return render(request, 'website/admin_panel_products.html',context)
 
+#Admin-Products
 @login_required
 def add_product(request):
     categories = Category.objects.all()
-
     if request.method == 'POST':
-
-        category = get_object_or_404(Category, id=request.POST.get('category'))
-
+        category_id = request.POST.get('category')
         name = request.POST.get('name')
         price = request.POST.get('price')
         caption = request.POST.get('caption')
         is_available = request.POST.get('is_available') == 'on'
 
-        media_data = request.POST.get('media_data')
+        category = get_object_or_404(Category, id=category_id)
 
-        if not name or not price:
-            return render(request, 'website/add_product.html', {
-                'categories': categories,
-                'message': 'Jaza taarifa zote muhimu'
-            })
+        with transaction.atomic():
+            product = Product.objects.create(
+                category=category,
+                name=name,
+                price=price,
+                caption=caption,
+                is_available=is_available
+            )
 
-        product = Product.objects.create(
-            category=category,
-            name=name,
-            price=price,
-            caption=caption,
-            is_available=is_available
-        )
+            # 🔧 FIX ONLY HERE (Cloudinary JSON style)
+            media_data = request.POST.get('media_data')
+            if media_data:
+                import json
+                for m in json.loads(media_data):
+                    ProductImage.objects.create(
+                        product=product,
+                        product_url=m.get('url'),
+                        product_media_type=m.get('type'),
+                        product_public_id=m.get('public_id')
+                    )
 
-        # CLOUDINARY MEDIA SAVE
-        if media_data:
-            media_list = json.loads(media_data)
+        return redirect('admin_panel')
 
-            for m in media_list:
-                ProductImage.objects.create(
-                    product=product,
-                    product_url=m['url'],
-                    product_media_type=m['type'],
-                    product_public_id=m['public_id']
-                )
-
-        return redirect('admin_panel_products', slug=category.slug)
-
-    return render(request, 'website/add_product.html', {
-        'categories': categories
-    })
-
+    return render(request, 'website/add_product.html', {'categories': categories})
 
 @login_required
 def edit_product(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
+    product = Product.objects.get(id=product_id)
     categories = Category.objects.all()
-
     if request.method == 'POST':
-
-        product.category = get_object_or_404(Category, id=request.POST.get('category'))
-        product.name = request.POST.get('name', '').strip()
-        product.caption = request.POST.get('caption', '').strip()
-
-        try:
-            product.price = Decimal(request.POST.get('price', 0))
-        except:
-            product.price = Decimal('0')
-
-        product.is_available = bool(request.POST.get('is_available'))
+        category_id = request.POST.get('category')
+        product.category = Category.objects.get(id=category_id)
+        product.name = request.POST.get('name')
+        product.price = request.POST.get('price')
+        product.caption = request.POST.get('caption')
+        product.is_available = request.POST.get('is_available') == 'on'
         product.save()
 
+        # 🔧 FIX ONLY HERE (media sync)
         media_data = request.POST.get('media_data')
-
         if media_data:
+            import json
             product.images.all().delete()
-
-            media_list = json.loads(media_data)
-
-            for m in media_list:
+            for m in json.loads(media_data):
                 ProductImage.objects.create(
                     product=product,
-                    product_url=m['url'],
-                    product_media_type=m['type'],
-                    product_public_id=m['public_id']
+                    product_url=m.get('url'),
+                    product_media_type=m.get('type'),
+                    product_public_id=m.get('public_id')
                 )
 
         return redirect('admin_panel_products', slug=product.category.slug)
 
-    return render(request, 'website/edit_product.html', {
+    context = {
         'edit_product': product,
-        'categories': categories
-    })
-
+        'categories': categories,
+        'message': 'Product updated successfully'
+    }
+    return render(request, 'website/edit_product.html', context)
 
 @login_required
 def delete_product(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
-
-    slug = product.category.slug if product.category else None
-
+    product = Product.objects.get(id=product_id)
     if request.method == 'POST':
         product.delete()
-        return redirect('admin_panel_products', slug=slug)
+        return redirect('admin_panel_products')
+    context = {
+        'product': product
+    }
+    return render(request, 'website/delete_product.html', context)
 
-    return render(request, 'website/delete_product.html', {'product': product})
-
-
-# =========================
-# SITE VIEWS
-# =========================
-
+#Site Categories Zipo Hapa
 def categories(request):
-    return render(request, 'website/categories.html', {
-        'categories': Category.objects.all()
-    })
-
-
+    categories=Category.objects.all()
+    context={'categories':categories}
+    return render(request, 'website/categories.html',context)
+                                                                 
+#Site Products Ziko Hapa.
 def products(request, slug):
-    category = get_object_or_404(Category, slug=slug)
-    products = Product.objects.filter(category=category, is_available=True).order_by('-id')
-
-    message = 'Hakuna bidhaa katika category hii' if not products.exists() else ''
-
-    return render(request, 'website/products.html', {
-        'products': products,
+    category=get_object_or_404(Category, slug=slug)
+    products=Product.objects.filter(category=category, is_available=True).order_by('-id')   
+    if not products.exists():
+            message='Hakuna bidhaa katika category hii'
+    else:
+        message='Hakuna bidhaa kwa sasa!'
+    context={
+        'products':products, 
         'category': category,
         'message': message
-    })
+        }
+    return render(request, 'website/products.html',context)
 
-
-# =========================
-# ORDERS
-# =========================
-
+# Orders Ziko Hapa
 def order(request, product_id):
     product = get_object_or_404(Product, id=product_id)
 
     if request.method == 'POST':
-
         name = request.POST.get('name')
-        phone = ''.join(filter(str.isdigit, request.POST.get("phone", "")))
-
-        if not phone.startswith("0"):
-            phone = "0" + phone[-9:]
-
+        phone = request.POST.get("phone", "")
+        phone = ''.join(filter(str.isdigit, phone))
+        if phone.startswith("255"):
+            phone = phone[3:]
+        if phone.startswith("0"):
+            phone = phone
+        else:
+            phone = "0" + phone
         if len(phone) != 10:
             return HttpResponse("Invalid phone number")
-
+        location = request.POST.get('location')
+        quantity = int(request.POST.get('quantity'))
         Order.objects.create(
             name=name,
             phone=phone,
-            location=request.POST.get('location'),
+            location=location,
             product=product,
-            quantity=int(request.POST.get('quantity'))
+            quantity=quantity
         )
-
+        message = f"""
+        Name: {name}
+        Phone: {phone}
+        Location: {location}
+        Product: {product.name}
+        Quantity: {quantity}
+        """
         send_mail(
-            subject=f"NEW ORDER - {product.name}",
-            message=f"{name} ordered {product.name}",
-            from_email=None,
-            recipient_list=["riphatymkude96@outlook.com"],
-            fail_silently=False,
+        subject=f"NEW ORDER - {product.name}",
+        message=message,
+        from_email=None,
+        recipient_list=["riphatymkude96@outlook.com"],
+        fail_silently=False,
         )
-
         return redirect('categories')
-
     return render(request, "website/order.html", {"product": product})
 
+@login_required
+def order_flow(request):
+    orders = Order.objects.all()
 
-# =========================
-# AUTH
-# =========================
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+
+    if not start_date or not end_date:
+        today = date.today()
+        start_date = today.replace(day=1)
+        end_date = today
+
+    orders = orders.filter(created_at__date__range=[start_date, end_date])
+
+    orders = orders.order_by('-created_at')
+
+    total_orders = orders.count()
+    confirmed_orders = orders.filter(status='Confirmed').count()
+    fake_orders = orders.filter(status='Fake').count()
+
+    percentage_confirmed = (confirmed_orders / total_orders * 100) if total_orders > 0 else 0
+
+    context = {
+        'orders': orders,
+        'total_orders': total_orders,
+        'confirmed_orders': confirmed_orders,
+        'fake_orders': fake_orders,
+        'percentage_confirmed': percentage_confirmed,
+        'start_date': start_date,
+        'end_date': end_date,
+    }
+
+    return render(request, 'website/order_flow.html', context)
 
 @login_required
+def set_fake(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    order.status = 'Fake'
+    order.save()
+    return redirect('order_flow')
+
+# Site settings
+@login_required
+def save_meta_pixel(request):
+    settings = SiteSetting.objects.first()
+    if request.method == "POST":
+        if request.POST.get("delete_pixel"):
+            if settings:
+                settings.meta_pixel = ""
+                settings.save()
+            return redirect('meta_pixel')
+        code = request.POST.get("meta-pixel", "").strip()
+        if code:
+            if not settings:
+                SiteSetting.objects.create(meta_pixel=code)
+            else:
+                settings.meta_pixel = code
+                settings.save()
+        return redirect('meta_pixel')
+    return render(request, 'website/meta_pixel.html', {'settings': settings})
+
+# Review
+def review_page(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    if order.status == "Confirmed":
+        context={
+            "error": "Hauruhusiwi kutoa review kabla ya Kununua/delivery"
+        }
+    if request.method == "POST":
+        rating = request.POST.get("rating")
+        comment = request.POST.get("comment")
+        Review.objects.create(
+            product=order.product,
+            order=order,
+            customer_name=order.name,
+            rating=rating,
+            comment=comment
+        )
+
+        return redirect("review_thanks")
+
+    context={
+        "order": order
+    }
+    return render(request, "website/review.html", context)
+
 def logout_view(request):
     logout(request)
     return redirect('login')
