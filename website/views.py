@@ -131,9 +131,13 @@ def edit_product(request, product_id):
         product.is_available = bool(request.POST.get('is_available'))
 
         product.save()
+
+        # =====================
+        # 🔥 MOBILE SAFE FILES
+        # =====================
         files = request.FILES.getlist('images')
 
-        # fallback (mobile sometimes sends single file)
+        # fallback for mobile single upload
         if not files:
             single_file = request.FILES.get('images')
             if single_file:
@@ -144,31 +148,12 @@ def edit_product(request, product_id):
         for f in files:
             if not f:
                 continue
-
-            content_type = f.content_type.lower()
-
-            # accept images + videos + HEIC
-            if not (
-                content_type.startswith('image/')
-                or content_type.startswith('video/')
-                or 'heic' in content_type
-            ):
-                continue
-
-            # size limits
-            if content_type.startswith('image/') and f.size > 5 * 1024 * 1024:
-                continue
-
-            if content_type.startswith('video/') and f.size > 25 * 1024 * 1024:
-                continue
-
             valid_files.append(f)
 
         # =====================
-        # SAVE MEDIA
+        # SAVE IMAGES
         # =====================
         if valid_files:
-            # delete old media
             product.images.all().delete()
 
             for f in valid_files:
@@ -178,6 +163,7 @@ def edit_product(request, product_id):
                 )
 
         return redirect('admin_panel_products', slug=product.category.slug)
+
     return render(request, 'website/edit_product.html', {
         'edit_product': product,
         'categories': categories
