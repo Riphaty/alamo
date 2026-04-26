@@ -20,9 +20,15 @@
                     Yes, Delete
                 </button>
 
-                <a href="{% url 'admin_panel_products' %}" class="edit-btn">
-                    Cancel
-                </a>
+                {% if product.category %}
+                    <a href="{% url 'admin_panel_products' slug=product.category.slug %}" class="edit-btn">
+                        Cancel
+                    </a>
+                {% else %}
+                    <a href="/" class="edit-btn">
+                        Cancel
+                    </a>
+                {% endif %}
 
             </div>
 
