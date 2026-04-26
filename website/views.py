@@ -113,43 +113,37 @@ def add_product(request):
 def edit_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     categories = Category.objects.all()
-
     if request.method == 'POST':
-        category_id = request.POST.get('category')
-
-        if not category_id:
-            return redirect('admin_panel_products')
-
-        product.category = get_object_or_404(Category, id=category_id)
-
+        product.category = get_object_or_404(Category, id=request.POST.get('category'))
         product.name = request.POST.get('name', '').strip()
         product.caption = request.POST.get('caption', '').strip()
-
-        price = request.POST.get('price', '0')
-
         try:
-            product.price = Decimal(price)
+            product.price = Decimal(request.POST.get('price', 0))
         except:
             product.price = Decimal('0')
-
         product.is_available = bool(request.POST.get('is_available'))
-
         product.save()
-
+        images = request.FILES.getlist('images')
+        if images:
+            product.images.all().delete()
+            for img in images:
+                ProductImage.objects.create(
+                    product=product,
+                    file=img
+                )
         return redirect('admin_panel_products', slug=product.category.slug)
-
     return render(request, 'website/edit_product.html', {
         'edit_product': product,
-        'categories': categories,
-        'message': 'Edit product loaded'
+        'categories': categories
     })
+
 @login_required
 def delete_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
 
     if request.method == 'POST':
         product.delete()
-        return redirect('admin_panel_products')
+        return redirect('admin_panel_products', slug=product.category.slug)
 
     return render(request, 'website/delete_product.html', {
         'product': product
