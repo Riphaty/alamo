@@ -10,21 +10,23 @@
             {% if product.caption %}
             <p class="product-caption">{{ product.caption }}</p>
             {% endif %}
+            <!-- SWIPER -->
             <div class="product-media">
                 <div class="swiper">
                     <div class="swiper-wrapper">
                         {% for img in product.images.all %}
-                        <div class="swiper-slide">
-                            {% if img.is_video %}
-                            <video class="media" id="video" src="{{ img.file }}" controls></video>
-                            {% else %}
-                            <img class="media" src="{{ img.file }}" alt="">
-                            {% endif %}
-                        </div>
+                            <div class="swiper-slide">
+                                {% if img.is_video %}
+                                <video id="video" class="media " src="{{ img.file.url }}" controls></video>
+                                {% else %}
+                                    <img class="media" src="{{ img.file.url }}" alt="">
+                                {% endif %}
+                            </div>
                         {% empty %}
-                        <div class="empty">No images available</div>
+                            <div class="empty">No images available</div>
                         {% endfor %}
                     </div>
+                    <!-- controls INSIDE swiper (important) -->
                     <div class="swiper-pagination"></div>
                     <div class="swiper-button-next"></div>
                     <div class="swiper-button-prev"></div>
