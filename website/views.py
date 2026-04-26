@@ -113,12 +113,16 @@ def add_product(request):
 def edit_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     categories = Category.objects.all()
+
     if request.method == 'POST':
+
+        # =====================
         # BASIC FIELDS
+        # =====================
         product.category = get_object_or_404(Category, id=request.POST.get('category'))
         product.name = request.POST.get('name', '').strip()
         product.caption = request.POST.get('caption', '').strip()
-        # PRICE SAFE
+
         try:
             product.price = Decimal(request.POST.get('price', 0))
         except:
@@ -128,29 +132,43 @@ def edit_product(request, product_id):
 
         product.save()
 
-        # =========================
-        # 🔥 SAFE MOBILE UPLOAD FIX
-        # =========================
-        images = request.FILES.getlist('images')
+        # =====================
+        # 🔥 MOBILE SAFE FILES
+        # =====================
+        files = request.FILES.getlist('images')
 
-        if images:
-            # optional: clear old images
+        # fallback for mobile single upload
+        if not files:
+            single_file = request.FILES.get('images')
+            if single_file:
+                files = [single_file]
+
+        valid_files = []
+
+        for f in files:
+            if not f:
+                continue
+
+            # accept images + mobile formats (HEIC included)
+            if not (f.content_type.startswith('image/') or 'heic' in f.content_type.lower()):
+                continue
+
+            # optional size limit (5MB)
+            if f.size > 5 * 1024 * 1024:
+                continue
+
+            valid_files.append(f)
+
+        # =====================
+        # SAVE IMAGES
+        # =====================
+        if valid_files:
             product.images.all().delete()
 
-            for img in images:
-                # basic validation (mobile safe)
-                if not img:
-                    continue
-
-                if not img.content_type.startswith('image/'):
-                    continue
-
-                if img.size > 5 * 1024 * 1024:  # 5MB limit
-                    continue
-
+            for f in valid_files:
                 ProductImage.objects.create(
                     product=product,
-                    file=img
+                    file=f
                 )
 
         return redirect('admin_panel_products', slug=product.category.slug)
