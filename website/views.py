@@ -136,7 +136,7 @@ def edit_product(request, product_id):
 
         product.save()
 
-        return redirect('admin_panel_products')
+        return redirect('admin_panel_products', slug=product.category.slug)
 
     return render(request, 'website/edit_product.html', {
         'edit_product': product,
@@ -149,12 +149,12 @@ def delete_product(request, product_id):
 
     if request.method == 'POST':
         product.delete()
-        return redirect('admin_panel_products', slug=product.category.slug)
+        return redirect('admin_panel_products')
 
     return render(request, 'website/delete_product.html', {
         'product': product
     })
-
+    
 #Site Categories Zipo Hapa
 def categories(request):
     categories=Category.objects.all()
