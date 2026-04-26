@@ -4,8 +4,8 @@
 <div class="content-container">
     <div class="sales-container">
         <form method="POST" enctype="multipart/form-data" class="form-box">
-            {% csrf_token %}
             <h2>Edit Category</h2>
+            {% csrf_token %}
 
             <label>Name</label>
             <input type="text" name="name" value="{{ edit_category.name }}" required>
