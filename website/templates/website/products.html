@@ -3,52 +3,54 @@
 {% load cloudinary %}
 {% block content %}
 {% if products %}
-
-<h1 class="title">{{ category.name }}</h1>
-<div class="products-container">
-    {% for product in products %}
-    <div class="product-card">
-        <h3 class="product-title">{{ product.name }}</h3>
-        {% if product.caption %}
-        <p class="product-caption">{{ product.caption }}</p>
-        {% endif %}
-        <!-- SWIPER -->
-        <div class="product-media">
-            <div class="swiper">
-                <div class="swiper-wrapper">
-                    {% for img in product.images.all %}
-                    <div class="swiper-slide">
-                        {% if img.is_video %}
-                        <video class="media" id="video" src="{{ img.file.url }}" controls></video>
-                        {% else %}
-                        <img class="media" src="{{ img.file.url }}" alt="">
-                        {% endif %}
+    <h1 class="title">{{ category.name }}</h1>
+    <div class="products-container">
+        {% for product in products %}
+        <div class="product-card">
+            <h3 class="product-title">{{ product.name }}</h3>
+            {% if product.caption %}
+            <p class="product-caption">{{ product.caption }}</p>
+            {% endif %}
+            <!-- SWIPER -->
+            <div class="product-media">
+                <div class="swiper">
+                    <div class="swiper-wrapper">
+                        {% for img in product.images.all %}
+                        <div class="swiper-slide">
+                            {% if img.is_video %}
+                            <video class="media" id="video" src="{{ img.file.url }}" controls></video>
+                            {% else %}
+                            <img class="media" src="{{ img.file.url }}" alt="">
+                            {% endif %}
+                        </div>
+                        {% empty %}
+                        <div class="empty">No images available</div>
+                        {% endfor %}
                     </div>
-                    {% empty %}
-                    <div class="empty">No images available</div>
-                    {% endfor %}
+                    <!-- controls INSIDE swiper (important) -->
+                    <div class="swiper-pagination"></div>
+                    <div class="swiper-button-next"></div>
+                    <div class="swiper-button-prev"></div>
                 </div>
-                <!-- controls INSIDE swiper (important) -->
-                <div class="swiper-pagination"></div>
-                <div class="swiper-button-next"></div>
-                <div class="swiper-button-prev"></div>
             </div>
+            <p class="price">TSh {{ product.price|intcomma }}/=</p>
+            <div class="product-info">
+                <p>Location: Sinza Mori</p>
+                <p>Delivery: Nchi Nzima</p>
+                <p>Cash on Delivery</p>
+            </div>
+            {% if product.is_available %}
+                <a href="{% url 'order' product.id %}" class="order-btn" id="order-btn">Order Now</a>
+            {% else %}
+            <button class="order-btn disabled" disabled>Out of Stock</button>
+            {% endif %}
         </div>
-        <p class="price">TSh {{ product.price|intcomma }}/=</p>
-        <div class="product-info">
-            <p>Location: Sinza Mori</p>
-            <p>Delivery: Nchi Nzima</p>
-            <p>Cash on Delivery</p>
-        </div>
-        {% if product.is_available %}
-            <a href="{% url 'order' product.id %}" class="order-btn" id="order-btn">Order Now</a>
-        {% else %}
-        <button class="order-btn disabled" disabled>Out of Stock</button>
-        {% endif %}
+        {% endfor %}
     </div>
-    {% endfor %}
-</div>
+{% else %}
+    <h2 style="color: red;display: flex;justify-content: center;align-items: center;">Hakuna Bidhaa yoyote kwa sasa</h2>
 {% endif %}
+
 <script>
     document.querySelectorAll('.swiper').forEach((el) => {
         new Swiper(el, {
