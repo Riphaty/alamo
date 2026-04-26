@@ -14,13 +14,12 @@
                 <div class="swiper">
                     <div class="swiper-wrapper">
                         {% for img in product.images.all %}
-                        <!-- <div class="swiper-slide">
+                        <div class="swiper-slide">
                             {% if img.is_video %}
-                            <video class="media" id="video" src="{{ img.file.url }}" controls></video>
+                            <video class="media" id="video" src="{{ img.file }}" controls></video>
                             {% else %}
-                            <img class="media" src="{{ img.file.url }}" alt="">
-                            {% endif %} -->
-                            {% cloudinary img.file %}
+                            <img class="media" src="{{ img.file }}" alt="">
+                            {% endif %}
                         </div>
                         {% empty %}
                         <div class="empty">No images available</div>
