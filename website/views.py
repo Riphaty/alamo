@@ -110,6 +110,7 @@ def add_product(request):
     return render(request, 'website/add_product.html', {'categories': categories})
 
 @login_required
+
 def edit_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     categories = Category.objects.all()
@@ -148,6 +149,15 @@ def edit_product(request, product_id):
         for f in files:
             if not f:
                 continue
+
+            # accept images + mobile formats (HEIC included)
+            if not (f.content_type.startswith('image/') or 'heic' in f.content_type.lower()):
+                continue
+
+            # optional size limit (5MB)
+            if f.size > 5 * 1024 * 1024:
+                continue
+
             valid_files.append(f)
 
         # =====================
