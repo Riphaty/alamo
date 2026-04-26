@@ -1,38 +1,61 @@
 {% extends 'website/base.html' %}
 {% block content %}
+
 {% include 'website/tool_bar.html' %}
-{% if form %}
+
+{% if message %}
     <h2 style="color: rgb(6, 201, 87);">{{ message }}</h2>
 {% endif %}
+
 <div class="content-container">
     <div class="sales-container">
-        <h2>Edit Product</h2>
-        <form class="form-box" method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <label for="name">Name:</label>
-            <input class="input" type="text" id="name" name="name" value="{{ edit_product.name }}" required><br>
 
+        <h2>Edit Product</h2>
+
+        <form class="form-box" method="post">
+            {% csrf_token %}
+
+            <!-- NAME -->
+            <label for="name">Name:</label>
+            <input class="input" type="text" id="name" name="name"
+                   value="{{ edit_product.name }}" required><br>
+
+            <!-- CATEGORY -->
             <label for="category">Category:</label>
             <select class="input" id="category" name="category" required>
                 <option value="">Select a category</option>
                 {% for category in categories %}
-                    <option value="{{ category.id }}" {% if edit_product.category.id == category.id %}selected{% endif %}>{{ category.name }}</option>
+                    <option value="{{ category.id }}"
+                        {% if edit_product.category.id == category.id %}selected{% endif %}>
+                        {{ category.name }}
+                    </option>
                 {% endfor %}
             </select><br>
 
+            <!-- CAPTION -->
             <label for="caption">Caption:</label>
-            <input class="input" type="text" id="description" name="caption" value="{{ edit_product.caption }}"><br>
-            
-            <label for="price">Price:</label>
-            <input class="input" type="number" id="price" name="price" step="500" min="0" value="{{ edit_product.price }}" required><br>
-            
-            <input class="input" type="file" id="images" name="images" accept="image/*" multiple><br>
+            <input class="input" type="text" id="caption" name="caption"
+                   value="{{ edit_product.caption }}"><br>
 
+            <!-- PRICE -->
+            <label for="price">Price:</label>
+            <input class="input" type="number" id="price" name="price"
+                   step="500" min="0" value="{{ edit_product.price }}" required><br>
+
+            <!-- AVAILABLE -->
             <label for="is_available">Available:</label>
-            <input style="width: 25px; height: 25px;" type="checkbox" id="is_available" name="is_available" checked>
-            
+            <input style="width: 25px; height: 25px;"
+                   type="checkbox"
+                   id="is_available"
+                   name="is_available"
+                   {% if edit_product.is_available %}checked{% endif %}>
+
+            <br><br>
+
             <button type="submit" class="edit-btn">Save Changes</button>
         </form>
+
     </div>
 </div>
+
 {% endblock %}
