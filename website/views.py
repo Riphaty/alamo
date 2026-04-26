@@ -145,14 +145,15 @@ def edit_product(request, product_id):
     })
 @login_required
 def delete_product(request, product_id):
-    product = Product.objects.get(id=product_id)
+    product = get_object_or_404(Product, id=product_id)
+
     if request.method == 'POST':
         product.delete()
         return redirect('admin_panel_products')
-    context = {
+
+    return render(request, 'website/delete_product.html', {
         'product': product
-    }
-    return render(request, 'website/delete_product.html', context)
+    })
 
 #Site Categories Zipo Hapa
 def categories(request):
