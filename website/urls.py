@@ -12,7 +12,7 @@ urlpatterns=[
     path('edit-category/<int:category_id>/',edit_category,name='edit_category'),
     path('delete-category/<int:category_id>/',delete_category,name='delete_category'),
     
-    path('admin-panel-products/<slug:slug>/',admin_panel_products,name='admin_panel_products'),
+    path('admin-panel-products/',admin_panel_products,name='admin_panel_products'),
     path('admin-panel/',admin_panel,name='admin_panel'),  
     
     
