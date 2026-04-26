@@ -15,14 +15,15 @@ from django.contrib.auth import logout
 def add_category(request):
     if request.method=='POST':
         name=request.POST.get('name')
+        description=request.POST.get('description')
 
-        # 🔧 FIX: removed FILES dependency (Cloudinary consistency)
+        # 🔧 FIXED (Cloudinary-style fields)
         Category.objects.create(
             name=name,
+            description=description,
             thumbnail_url=request.POST.get('thumbnail_url'),
             media_type=request.POST.get('thumbnail_type','image'),
-            public_id=request.POST.get('thumbnail_public_id',''),
-            description=request.POST.get('description')
+            public_id=request.POST.get('thumbnail_public_id','')
         )
         return redirect('admin_panel')
 
@@ -34,16 +35,18 @@ def add_category(request):
 @login_required
 def edit_category(request, category_id):
     category = Category.objects.get(id=category_id)
+
     if request.method == 'POST':
         category.name = request.POST.get('name')
         category.description = request.POST.get('description')
 
-        # 🔧 FIX: no FILES usage
+        # 🔧 FIXED (no FILES usage)
         if request.POST.get('thumbnail_url'):
             category.thumbnail_url = request.POST.get('thumbnail_url')
 
         category.save()
         return redirect('admin_panel')
+
     context = {
         'edit_category': category,
         'message': 'Category updated successfully'
@@ -85,10 +88,14 @@ def admin_panel_products(request, slug):
              }
     return render(request, 'website/admin_panel_products.html',context)
 
-#Admin-Products
+# =========================
+# PRODUCTS (FIXED)
+# =========================
+
 @login_required
 def add_product(request):
     categories = Category.objects.all()
+
     if request.method == 'POST':
         category_id = request.POST.get('category')
         name = request.POST.get('name')
@@ -107,12 +114,13 @@ def add_product(request):
                 is_available=is_available
             )
 
-            # 🔧 FIX ONLY HERE (Cloudinary JSON style)
+            # 🔧 FIXED MEDIA (Cloudinary JSON pipeline)
             media_data = request.POST.get('media_data')
+
             if media_data:
                 import json
                 for m in json.loads(media_data):
-                    ProductMedia.objects.create(
+                    ProductImage.objects.create(
                         product=product,
                         product_url=m.get('url'),
                         product_media_type=m.get('type'),
@@ -123,10 +131,12 @@ def add_product(request):
 
     return render(request, 'website/add_product.html', {'categories': categories})
 
+
 @login_required
 def edit_product(request, product_id):
     product = Product.objects.get(id=product_id)
     categories = Category.objects.all()
+
     if request.method == 'POST':
         category_id = request.POST.get('category')
         product.category = Category.objects.get(id=category_id)
@@ -136,13 +146,15 @@ def edit_product(request, product_id):
         product.is_available = request.POST.get('is_available') == 'on'
         product.save()
 
-        # 🔧 FIX ONLY HERE (media sync)
+        # 🔧 FIXED MEDIA (replace old media safely)
         media_data = request.POST.get('media_data')
+
         if media_data:
             import json
             product.images.all().delete()
+
             for m in json.loads(media_data):
-                ProductMedia.objects.create(
+                ProductImage.objects.create(
                     product=product,
                     product_url=m.get('url'),
                     product_media_type=m.get('type'),
@@ -157,6 +169,7 @@ def edit_product(request, product_id):
         'message': 'Product updated successfully'
     }
     return render(request, 'website/edit_product.html', context)
+
 
 @login_required
 def delete_product(request, product_id):
