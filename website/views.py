@@ -141,11 +141,17 @@ def edit_product(request, product_id):
 def delete_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
 
-    category_slug = product.category.slug
+    # 🔥 SAFE EXTRACTION
+    category_slug = None
+    if product.category:
+        category_slug = product.category.slug
 
     if request.method == 'POST':
         product.delete()
-        return redirect('admin_panel_products', slug=category_slug)
+
+        if category_slug:
+            return redirect('admin_panel_products', slug=category_slug)
+        return redirect('admin_panel_products')
 
     return render(request, 'website/delete_product.html', {
         'product': product
