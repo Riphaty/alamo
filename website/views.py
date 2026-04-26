@@ -110,7 +110,6 @@ def add_product(request):
     return render(request, 'website/add_product.html', {'categories': categories})
 
 @login_required
-
 def edit_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     categories = Category.objects.all()
@@ -130,15 +129,13 @@ def edit_product(request, product_id):
             product.price = Decimal('0')
 
         product.is_available = bool(request.POST.get('is_available'))
-
         product.save()
 
         # =====================
-        # 🔥 MOBILE SAFE FILES
+        # FILES
         # =====================
         files = request.FILES.getlist('images')
 
-        # fallback for mobile single upload
         if not files:
             single_file = request.FILES.get('images')
             if single_file:
@@ -146,31 +143,57 @@ def edit_product(request, product_id):
 
         valid_files = []
 
+        MAX_IMAGE_SIZE = 5 * 1024 * 1024      # 5MB
+        MAX_VIDEO_SIZE = 50 * 1024 * 1024     # 50MB
+
         for f in files:
             if not f:
                 continue
 
-            # accept images + mobile formats (HEIC included)
-            if not (f.content_type.startswith('image/') or 'heic' in f.content_type.lower()):
-                continue
+            content_type = f.content_type.lower()
 
-            # optional size limit (5MB)
-            if f.size > 5 * 1024 * 1024:
-                continue
+            # ACCEPT IMAGE
+            if content_type.startswith('image/') or 'heic' in content_type:
+                if f.size > MAX_IMAGE_SIZE:
+                    continue
+                valid_files.append(f)
 
-            valid_files.append(f)
+            # ACCEPT VIDEO
+            elif content_type.startswith('video/'):
+                if f.size > MAX_VIDEO_SIZE:
+                    continue
+                valid_files.append(f)
 
         # =====================
-        # SAVE IMAGES
+        # SAVE FILES (SAFE)
         # =====================
         if valid_files:
+            # usifute kwanza, subiri uhakikishe upload imefanikiwa
             product.images.all().delete()
 
             for f in valid_files:
-                ProductImage.objects.create(
-                    product=product,
-                    file=f
-                )
+
+                # 🔥 OPTION 1: Cloudinary (recommended)
+                try:
+                    upload = cloudinary.uploader.upload(
+                        f,
+                        resource_type="auto"
+                    )
+                    file_url = upload['secure_url']
+
+                    ProductImage.objects.create(
+                        product=product,
+                        file=file_url   # lazima field yako ikubali URL
+                    )
+
+                except Exception as e:
+                    print("Upload failed:", e)
+
+                # 🔥 OPTION 2: Local/Default storage (ukitaka)
+                # ProductImage.objects.create(
+                #     product=product,
+                #     file=f
+                # )
 
         return redirect('admin_panel_products', slug=product.category.slug)
 
