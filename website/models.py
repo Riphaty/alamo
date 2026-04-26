@@ -1,15 +1,16 @@
 from django.utils.text import slugify
 from django.db import models
-from django.core.validators import MinValueValidator,MaxValueValidator
-from cloudinary.models import CloudinaryField
+from django.core.validators import MinValueValidator, MaxValueValidator
+
 
 # Create your models here.
 class Category(models.Model):
-    name=models.CharField(max_length=100)
-    thumbnail = CloudinaryField('image', blank=True, null=True)
-    description=models.TextField(blank=True,null=True)
-    category_view=models.PositiveBigIntegerField(default=0)
-    slug=models.SlugField(unique=True)
+    name = models.CharField(max_length=100)
+    thumbnail_url = models.URLField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    category_view = models.PositiveBigIntegerField(default=0)
+    slug = models.SlugField(unique=True, blank=True)
+
     def save(self, *args, **kwargs):
         if not self.slug:
             base_slug = slugify(self.name)
@@ -20,52 +21,60 @@ class Category(models.Model):
                 counter += 1
             self.slug = slug
         super().save(*args, **kwargs)
+
     def __str__(self):
         return self.name
-    
+
+
 class Product(models.Model):
-    category=models.ForeignKey(Category,on_delete=models.CASCADE)
-    name=models.CharField(max_length=100)
-    price=models.DecimalField(max_digits=10,decimal_places=0, validators=[MinValueValidator(0)])
-    caption=models.TextField(blank=True)
-    is_available=models.BooleanField(default=True)
-    product_view=models.PositiveBigIntegerField(default=0)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    price = models.DecimalField(max_digits=10, decimal_places=0, validators=[MinValueValidator(0)])
+    caption = models.TextField(blank=True)
+    is_available = models.BooleanField(default=True)
+    product_view = models.PositiveBigIntegerField(default=0)
+
     def __str__(self):
         return self.name
 
 
-class ProductImage(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
-    file = CloudinaryField(resource_type="auto", blank=True, null=True)
+class ProductMedia(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='media')
+    url = models.URLField()
+    media_type = models.CharField(max_length=10) 
+    public_id = models.CharField(max_length=255, blank=True, null=True)
 
     def is_video(self):
-        if not self.file:
-            return False
-        return self.file.resource_type == "video"
+        return self.media_type == "video"
 
     def __str__(self):
-        return f'Picha za {self.product.name}'
-        
+        return f"Media za {self.product.name}"
+
+
 class Order(models.Model):
     STATUS_CHOICES = [
         ('Confirmed', 'Confirmed'),
         ('Fake', 'Fake'),
     ]
+
     name = models.CharField(max_length=100)
     phone = models.CharField(max_length=20)
     location = models.CharField(max_length=100)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField()
-    status=models.CharField(max_length=20, choices=STATUS_CHOICES, default='Confirmed')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Confirmed')
     created_at = models.DateTimeField(auto_now_add=True)
+
     def __str__(self):
         return self.location
-    
+
+
 class SiteSetting(models.Model):
     meta_pixel = models.TextField(blank=True, null=True)
+
     def __str__(self):
         return "Site Settings"
-    
+
 
 class Review(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="reviews")
@@ -74,5 +83,6 @@ class Review(models.Model):
     comment = models.TextField()
     is_approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+
     def __str__(self):
         return f"{self.product.name} - {self.rating}"

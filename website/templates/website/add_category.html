@@ -1,22 +1,75 @@
 {% extends 'website/base.html' %}
 {% block content %}
 {% include 'website/tool_bar.html' %}
+
 <div class="content-container">
     <div class="sales-container">
+
         <form method="post" enctype="multipart/form-data" class="form-box">
+            
             <h2>Enter category details:</h2>
+
             {% csrf_token %}
+
             <label for="name">Name:</label>
             <input type="text" id="name" name="name" required><br><br>
-            
-            <input type="file" name="thumbnail" accept="image/*" multiple>
+
+            <input type="file" id="thumbnail" name="thumbnail" accept="image/*">
             <label for="thumbnail">Upload Image</label><br><br>
-            
+
             <label for="description">Description:</label>
             <textarea id="description" name="description"></textarea><br><br>
-            
+
             <input type="submit" value="Add Category" class="action edit-btn">
+
         </form>        
+
     </div>
 </div>
+
+
+<!-- ===================== -->
+<!-- CLOUDINARY SCRIPT -->
+<!-- ===================== -->
+<script>
+async function uploadToCloudinary(file) {
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "YOUR_PRESET");
+
+    const res = await fetch(
+        "https://api.cloudinary.com/v1_1/YOUR_CLOUD_NAME/upload",
+        {
+            method: "POST",
+            body: formData
+        }
+    );
+
+    return await res.json();
+}
+
+
+// handle category thumbnail upload
+document.getElementById("thumbnail").addEventListener("change", async function (e) {
+
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    const data = await uploadToCloudinary(file);
+
+    console.log("Uploaded:", data);
+
+    // optional: store values in hidden inputs or send via AJAX later
+    window.categoryThumbnail = {
+        url: data.secure_url,
+        type: data.resource_type,
+        public_id: data.public_id
+    };
+
+});
+
+</script>
+
 {% endblock %}
