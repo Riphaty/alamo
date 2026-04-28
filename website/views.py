@@ -20,11 +20,13 @@ def add_category(request):
         name = request.POST.get('name')
         thumbnail = request.FILES.get('thumbnail')
         description = request.POST.get('description')
+        sort_category = int(request.POST.get('sort_category'))
 
         Category.objects.create(
             name=name,
             thumbnail=thumbnail,
-            description=description
+            description=description,
+            sort_category=sort_category
         )
 
         return redirect('admin_panel')
@@ -37,6 +39,7 @@ def edit_category(request, category_id):
     if request.method == 'POST':
         category.name = request.POST.get('name')
         category.description = request.POST.get('description')
+        category.sort_category = int(request.POST.get('sort_category') or 2)
         if request.FILES.get('thumbnail'):
             category.thumbnail = request.FILES.get('thumbnail')
         category.save()
@@ -68,14 +71,14 @@ def admin_panel(request):
 
 @login_required
 def admin_panel_category(request):
-    categories=Category.objects.all()
+    categories=Category.objects.all().order_by('sort_category','-id')
     context={'categories':categories}
     return render(request, 'website/admin_panel_categories.html',context)
 
 @login_required
 def admin_panel_products(request, slug):
     category=get_object_or_404(Category, slug=slug)
-    products=Product.objects.filter(category=category).order_by('name')
+    products=Product.objects.filter(category=category).order_by('sort_product','-id')
     context={
         'products':products,
         'category':category
@@ -92,6 +95,7 @@ def add_product(request):
         name = request.POST.get('name')
         price = request.POST.get('price')
         caption = request.POST.get('caption')
+        sort_product = request.POST.get('sort_product')
         is_available = request.POST.get('is_available') == 'on'
         files = request.FILES.getlist('media')
 
@@ -103,7 +107,8 @@ def add_product(request):
             name=name,
             price=Decimal(price),
             caption=caption,
-            is_available=is_available
+            is_available=is_available,
+            sort_product=sort_product
         )
 
         # STEP 2: upload media OUTSIDE transaction
@@ -120,24 +125,18 @@ def edit_product(request, product_id):
     categories = Category.objects.all()
 
     if request.method == 'POST':
-
-        # ===== PRODUCT INFO =====
         category_id = request.POST.get('category')
-
         product.category = get_object_or_404(Category, id=category_id)
         product.name = request.POST.get('name')
         product.price = Decimal(request.POST.get('price') or 0)
         product.caption = request.POST.get('caption')
+        product.sort_product = int(request.POST.get('sort_product') or 2)
         product.is_available = request.POST.get('is_available') == 'on'
         product.save()
-
-        # ===== NEW MEDIA UPLOAD =====
         files = request.FILES.getlist('media')
         for f in files:
             ProductMedia.objects.create(product=product, file=f)
-
         return redirect('admin_panel')
-
     return render(request, 'website/edit_product.html', {
         'edit_product': product,
         'categories': categories
@@ -172,7 +171,7 @@ def delete_product(request, product_id):
 
 #Site Categories Zipo Hapa
 def categories(request):
-    categories=Category.objects.all()
+    categories=Category.objects.all().order_by('sort_category','-id')
     context={'categories':categories}
     return render(request, 'website/categories.html',context)
                                                                  
@@ -182,7 +181,7 @@ def products(request, slug):
     products = Product.objects.filter(
         category=category,
         is_available=True
-    ).order_by('-id')
+    ).order_by('sort_product','-id')
 
     return render(request, 'website/products.html', {
         'products': products,

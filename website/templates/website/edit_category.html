@@ -19,6 +19,8 @@
             <input type="file" name="thumbnail" id="thumbnail" accept="image/*"><br>
             <label>Description</label>
             <textarea name="description" id="description">{{ edit_category.description }}</textarea><br>
+            <label>Display Order:</label>
+            <input type="number" name="sort_category" value="{{ edit_category.sort_category }}"><br>
             <button type="submit" class="edit-btn">Save Changes</button>
         </form>
     </div>

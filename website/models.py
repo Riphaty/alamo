@@ -10,6 +10,7 @@ class Category(models.Model):
     description = models.TextField(blank=True, null=True)
     category_view = models.PositiveBigIntegerField(default=0)
     slug = models.SlugField(unique=True, blank=True)
+    sort_category=models.PositiveIntegerField(default=2)
     def save(self, *args, **kwargs):
         if not self.slug:
             base_slug = slugify(self.name)
@@ -30,6 +31,7 @@ class Product(models.Model):
     caption = models.TextField(blank=True)
     is_available = models.BooleanField(default=True)
     product_view = models.PositiveBigIntegerField(default=0)
+    sort_product=models.PositiveIntegerField(default=2)
     def __str__(self):
         return self.name
 

@@ -23,7 +23,9 @@
                     <a href="{% url 'edit_category' category.id %}" class="edit-btn">Edit</a>
                     <a href="{% url 'delete_category' category.id %}" ><i class="fas fa-trash-alt" style="font-size: 30px;"></i></a>
                 </div>
+                <p style="margin: 10px 0px 0px; font-weight: bold;"> Position No: <span style="color: green;">{{ category.sort_category }}</span></p>
             </div>
+
             {% endfor %}
         </div>
     {% else %}

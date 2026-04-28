@@ -48,7 +48,10 @@
             <label>Add New Media:</label>
             <input type="file" class="input" id="images" name="media" accept=".jpg,.jpeg,.png,.webp,.mp4,.webm" multiple><br>
             <label>Available:</label>
-            <input style="width: 25px; height: 25px;" type="checkbox" name="is_available" {% if edit_product.is_available %} checked {% endif %}><br><br>
+            <input style="width: 25px; height: 25px;" type="checkbox" name="is_available" {% if edit_product.is_available %} checked {% endif %}>
+            <label>Display Order:</label>
+            <input type="number" name="sort_product" value="{{ edit_product.sort_product }}">
+            <br><br>
             <button type="submit" class="edit-btn">Save Changes</button>
         </form>
     </div>

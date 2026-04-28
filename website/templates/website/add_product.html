@@ -24,8 +24,9 @@
             <input type="file" id="media" name="media" accept=".jpg,.jpeg,.png,.webp,.mp4,.webm" multiple>
             <div id="progress">0%</div>
             <label>Available:</label>
-            <input style="width:1.5rem;height:1.5rem;" type="checkbox" name="is_available" checked>
-            <br><br>
+            <input style="width:1.5rem;height:1.5rem;" type="checkbox" name="is_available" checked><br>
+            <label for="description">Sort id:</label>
+            <input type="text" id="sort_product" name="sort_product" value="{{ add_product.sort_product }}" required><br>
             <button type="submit" class="action edit-btn">Add Product</button>
         </form>
     </div>
