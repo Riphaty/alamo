@@ -1,0 +1,10 @@
+asgiref==3.11.1
+certifi==2026.4.22
+cloudinary==1.44.2
+Django==5.2.13
+pillow==12.2.0
+psycopg2-binary==2.9.12
+six==1.17.0
+sqlparse==0.5.5
+tzdata==2026.2
+urllib3==2.6.3
