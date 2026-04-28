@@ -20,7 +20,7 @@
                 {% endfor %}
             </select>
             <label>Caption:</label>
-            <input class="input" type="text" name="caption" value="{{ edit_product.caption }}">
+            <textarea class="input" type="text" name="caption" id="description" value="{{ edit_product.caption }}">
             <label>Price:</label>
             <input class="input" type="number" name="price" step="500" min="0"
                    value="{{ edit_product.price }}" required>
