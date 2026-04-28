@@ -10,17 +10,11 @@
                 <h2>{{ category.name }}</h2>
             </div>
             <div class="thumbnail">
-                {% if category.thumbnail_url %}
-                    <a href="{% if category.slug %}{% url 'products' category.slug %}{% endif %}">
-                        {% if category.media_type == "video" %}
-                            <video class="media" autoplay muted loop>
-                                <source src="{{ category.thumbnail_url }}" type="video/mp4">
-                            </video>
-                        {% else %}
-                            <img src="{{ category.thumbnail_url }}">
-                        {% endif %}
-                    </a>
-                {% endif %}
+                {% if category.thumbnail %}
+                        <a href="{% url 'products' category.slug %}" class="category-link">
+                        <img src="{{ category.thumbnail.url }}" class="thumbnail">
+                        </a>
+                    {% endif %}
             </div>
             <div class="category-description">
                 <p>{{ category.description }}</p>

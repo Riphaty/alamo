@@ -30,4 +30,5 @@ urlpatterns=[
     path('login/', auth_views.LoginView.as_view(template_name='auth/login.html'), name='login'),
     path('logout/', logout_view, name='logout'),
 
+    path('delete-media/<int:media_id>/', delete_media, name='delete_media'),
 ]   

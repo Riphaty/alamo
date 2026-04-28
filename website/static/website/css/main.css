@@ -493,9 +493,7 @@ body.sidebar-open .content-container{
     margin-bottom: 1rem;
     max-width: 500px;
 }
-#thumbnail{
-    display: none;
-}
+
 #description{ 
     min-height: 50px;
     field-sizing: content;
@@ -543,6 +541,12 @@ h2{
 
 p{
   font-size: clamp(1rem, 2vw, 1.2rem) !important;
+}
+h2,h3,h4{
+    color: #444444;
+}
+p{
+    color: #505050;
 }
 /* .................................................................................... */
 /* BUTTONS */
@@ -992,3 +996,30 @@ td, th {
         font-size: 14px;
     }
 }
+
+.arrangement{
+        display: grid;
+        grid-template-columns: repeat(auto-fit,minmax(100px,1fr));
+    }   
+    .array-image, .array-video{
+        border: 1px solid rgba(67, 199, 255, 0.784);
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        gap: 5px;
+        padding-bottom:5px;
+
+    }
+    .array-video video{
+        width: 100%;
+        object-fit: contain;
+    }
+    .array-image img{
+        width: 100%;
+        object-fit: contain;
+        object-position: bottom;
+        border-radius: 10px;
+    }

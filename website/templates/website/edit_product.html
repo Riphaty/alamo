@@ -4,18 +4,11 @@
 
 <div class="content-container">
     <div class="sales-container">
-
-        <h2>Edit Product</h2>
-
-        <form class="form-box" method="post">
-
+        <form class="form-box" method="post" enctype="multipart/form-data">
+            <h2>Edit Product</h2>
             {% csrf_token %}
-
-            <!-- NAME -->
             <label>Name:</label>
             <input class="input" type="text" name="name" value="{{ edit_product.name }}" required>
-
-            <!-- CATEGORY -->
             <label>Category:</label>
             <select class="input" name="category" required>
                 <option value="">Select a category</option>
@@ -26,101 +19,38 @@
                     </option>
                 {% endfor %}
             </select>
-
-            <!-- CAPTION -->
             <label>Caption:</label>
             <input class="input" type="text" name="caption" value="{{ edit_product.caption }}">
-
-            <!-- PRICE -->
             <label>Price:</label>
             <input class="input" type="number" name="price" step="500" min="0"
                    value="{{ edit_product.price }}" required>
-
-            <!-- CURRENT MEDIA -->
             <label>Current Media:</label>
-
-            {% for media in edit_product.media.all %}
-                {% if media.is_video %}
-                    <video class="media" controls style="width:200px;">
-                        <source src="{{ media.url }}">
-                    </video>
-                {% else %}
-                    <img src="{{ media.url }}" style="width:200px;">
-                {% endif %}
-            {% empty %}
-                <p>No media available</p>
-            {% endfor %}
-
-            <br>
-
-            <!-- NEW MEDIA UPLOAD (CLOUDINARY) -->
-            <label>Upload New Media:</label>
-            <input type="file" id="images" accept=".jpg,.jpeg,.png,.webp,.mp4,.webm" multiple>
-
-            <!-- hidden field for JS -->
-            <input type="hidden" name="media_data" id="media_data">
-
-            <br>
-
-            <!-- AVAILABLE -->
-            <label>Available:</label>
-            <input style="width: 25px; height: 25px;"
-                   type="checkbox"
-                   name="is_available"
-                   {% if edit_product.is_available %}checked{% endif %}>
-
+            <div class="arrangement">
+                {% for media in edit_product.media.all %}
+                    {% if media.is_video %}
+                        <div class="array-video">
+                            <video width="200" controls>
+                                <source src="{{ media.file.url }}">
+                            </video>
+                            <a href="{% url 'delete_media' media.id %}" class="fake-btn" id="order-btn" onclick="return confirm('Delete this media?')">Delete</a>
+                        </div>
+                    {% else %}
+                        <div class="array-image">
+                            <img src="{{ media.file.url }}" width="200">
+                            <a href="{% url 'delete_media' media.id %}" class="fake-btn" id="order-btn" onclick="return confirm('Delete this media?')">Delete</a>
+                        </div>
+                    {% endif %}
+                {% empty %}
+                    <p>No media available</p>
+                {% endfor %}
+            </div>
             <br><br>
-
+            <label>Add New Media:</label>
+            <input type="file" class="input" id="images" name="media" accept=".jpg,.jpeg,.png,.webp,.mp4,.webm" multiple><br>
+            <label>Available:</label>
+            <input style="width: 25px; height: 25px;" type="checkbox" name="is_available" {% if edit_product.is_available %} checked {% endif %}><br><br>
             <button type="submit" class="edit-btn">Save Changes</button>
-
         </form>
-
     </div>
 </div>
-
-
-<!-- ===================== -->
-<!-- CLOUDINARY SCRIPT -->
-<!-- ===================== -->
-<script>
-async function uploadToCloudinary(file) {
-
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", "YOUR_PRESET");
-
-    const res = await fetch(
-        "https://api.cloudinary.com/v1_1/YOUR_CLOUD_NAME/upload",
-        {
-            method: "POST",
-            body: formData
-        }
-    );
-
-    return await res.json();
-}
-
-
-document.getElementById("images").addEventListener("change", async function (e) {
-
-    const files = e.target.files;
-    let uploaded = [];
-
-    for (let file of files) {
-
-        const data = await uploadToCloudinary(file);
-
-        uploaded.push({
-            url: data.secure_url,
-            type: data.resource_type,
-            public_id: data.public_id
-        });
-    }
-
-    document.getElementById("media_data").value = JSON.stringify(uploaded);
-
-    console.log(uploaded);
-});
-</script>
-
 {% endblock %}

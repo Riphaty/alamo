@@ -7,22 +7,29 @@ from datetime import datetime, date
 from django.db.models import F
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
+from decimal import Decimal
+import cloudinary.uploader
+from django.db import transaction
 
 # Create your views here.
 #Admin Panel Ziko Hapa
 #Admin-Categories
 @login_required
 def add_category(request):
-    if request.method=='POST':
-        name=request.POST.get('name')
-        thumbnail=request.FILES.get('thumbnail')
-        description=request.POST.get('description')
-        Category.objects.create(name=name,thumbnail=thumbnail,description=description)
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        thumbnail = request.FILES.get('thumbnail')
+        description = request.POST.get('description')
+
+        Category.objects.create(
+            name=name,
+            thumbnail=thumbnail,
+            description=description
+        )
+
         return redirect('admin_panel')
-    context={
-        'message':'Category created successfully'
-        }
-    return render(request,'website/add_category.html',context)    
+
+    return render(request, 'website/add_category.html')
 
 @login_required
 def edit_category(request, category_id):
@@ -79,61 +86,85 @@ def admin_panel_products(request, slug):
 @login_required
 def add_product(request):
     categories = Category.objects.all()
+
     if request.method == 'POST':
         category_id = request.POST.get('category')
         name = request.POST.get('name')
         price = request.POST.get('price')
         caption = request.POST.get('caption')
         is_available = request.POST.get('is_available') == 'on'
-        files = request.FILES.getlist('images')
-        if not name or not price:
-            return render(request, 'website/add_product.html', {
-                'categories': categories,
-                'message': 'Jaza taarifa zote muhimu'
-            })
-        category = get_object_or_404(Category, id=category_id)
-        ALLOWED_EXTENSIONS = ('.jpg', '.jpeg', '.png', '.webp', '.mp4', '.webm')
-        with transaction.atomic():
-            product = Product.objects.create(
-                category=category,
-                name=name,
-                price=price,
-                caption=caption,
-                is_available=is_available
-            )
+        files = request.FILES.getlist('media')
 
-            for f in files:
-                if f.name.lower().endswith(ALLOWED_EXTENSIONS):
-                    ProductImage.objects.create(product=product, file=f)
+        category = get_object_or_404(Category, id=category_id)
+
+        # STEP 1: save product FAST (no delay)
+        product = Product.objects.create(
+            category=category,
+            name=name,
+            price=Decimal(price),
+            caption=caption,
+            is_available=is_available
+        )
+
+        # STEP 2: upload media OUTSIDE transaction
+        for f in files:
+            ProductMedia.objects.create(product=product, file=f)
+
         return redirect('admin_panel')
+
     return render(request, 'website/add_product.html', {'categories': categories})
 
 @login_required
 def edit_product(request, product_id):
-    product = Product.objects.get(id=product_id)
+    product = get_object_or_404(Product, id=product_id)
     categories = Category.objects.all()
+
     if request.method == 'POST':
+
+        # ===== PRODUCT INFO =====
         category_id = request.POST.get('category')
-        product.category = Category.objects.get(id=category_id)
+
+        product.category = get_object_or_404(Category, id=category_id)
         product.name = request.POST.get('name')
-        product.price = request.POST.get('price')
+        product.price = Decimal(request.POST.get('price') or 0)
         product.caption = request.POST.get('caption')
         product.is_available = request.POST.get('is_available') == 'on'
         product.save()
-        return redirect('admin_panel_products')
-    context = {
+
+        # ===== NEW MEDIA UPLOAD =====
+        files = request.FILES.getlist('media')
+        for f in files:
+            ProductMedia.objects.create(product=product, file=f)
+
+        return redirect('admin_panel')
+
+    return render(request, 'website/edit_product.html', {
         'edit_product': product,
-        'categories': categories,
-        'message': 'Product updated successfully'
-    }
-    return render(request, 'website/edit_product.html', context)
+        'categories': categories
+    })
+
+@login_required 
+def delete_media(request, media_id):
+    media = get_object_or_404(ProductMedia, id=media_id)
+    product_id = media.product.id
+
+    # extract public_id kutoka URL
+    file_url = media.file.url
+
+    # Cloudinary delete
+    cloudinary.uploader.destroy(media.file.public_id)
+
+    # delete DB record
+    media.delete()
+
+    return redirect('edit_product', product_id=product_id)
 
 @login_required
 def delete_product(request, product_id):
     product = Product.objects.get(id=product_id)
     if request.method == 'POST':
         product.delete()
-        return redirect('admin_panel_products')
+        return redirect('admin_panel')
     context = {
         'product': product
     }
@@ -147,18 +178,16 @@ def categories(request):
                                                                  
 #Site Products Ziko Hapa.
 def products(request, slug):
-    category=get_object_or_404(Category, slug=slug)
-    products=Product.objects.filter(category=category, is_available=True).order_by('-id')   
-    if not products.exists():
-            message='Hakuna bidhaa katika category hii'
-    else:
-        message='Hakuna bidhaa kwa sasa!'
-    context={
-        'products':products, 
-        'category': category,
-        'message': message
-        }
-    return render(request, 'website/products.html',context)
+    category = get_object_or_404(Category, slug=slug)
+    products = Product.objects.filter(
+        category=category,
+        is_available=True
+    ).order_by('-id')
+
+    return render(request, 'website/products.html', {
+        'products': products,
+        'category': category
+    })
 
 # Orders Ziko Hapa
 def order(request, product_id):
@@ -205,25 +234,18 @@ def order(request, product_id):
 @login_required
 def order_flow(request):
     orders = Order.objects.all()
-
     start_date = request.GET.get('start_date')
     end_date = request.GET.get('end_date')
-
     if not start_date or not end_date:
         today = date.today()
         start_date = today.replace(day=1)
         end_date = today
-
     orders = orders.filter(created_at__date__range=[start_date, end_date])
-
     orders = orders.order_by('-created_at')
-
     total_orders = orders.count()
     confirmed_orders = orders.filter(status='Confirmed').count()
     fake_orders = orders.filter(status='Fake').count()
-
     percentage_confirmed = (confirmed_orders / total_orders * 100) if total_orders > 0 else 0
-
     context = {
         'orders': orders,
         'total_orders': total_orders,
@@ -233,7 +255,6 @@ def order_flow(request):
         'start_date': start_date,
         'end_date': end_date,
     }
-
     return render(request, 'website/order_flow.html', context)
 
 @login_required

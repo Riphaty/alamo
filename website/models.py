@@ -1,16 +1,15 @@
 from django.utils.text import slugify
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
-
+from cloudinary.models import CloudinaryField
 
 # Create your models here.
 class Category(models.Model):
     name = models.CharField(max_length=100)
-    thumbnail_url = models.URLField(blank=True, null=True)
+    thumbnail = models.ImageField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     category_view = models.PositiveBigIntegerField(default=0)
     slug = models.SlugField(unique=True, blank=True)
-
     def save(self, *args, **kwargs):
         if not self.slug:
             base_slug = slugify(self.name)
@@ -21,10 +20,8 @@ class Category(models.Model):
                 counter += 1
             self.slug = slug
         super().save(*args, **kwargs)
-
     def __str__(self):
         return self.name
-
 
 class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
@@ -33,30 +30,24 @@ class Product(models.Model):
     caption = models.TextField(blank=True)
     is_available = models.BooleanField(default=True)
     product_view = models.PositiveBigIntegerField(default=0)
-
     def __str__(self):
         return self.name
 
-
 class ProductMedia(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='media')
-    url = models.URLField()
-    media_type = models.CharField(max_length=10) 
-    public_id = models.CharField(max_length=255, blank=True, null=True)
-
+    product = models.ForeignKey(Product,on_delete=models.CASCADE,related_name='media')
+    file = CloudinaryField(resource_type="auto")  
     def is_video(self):
-        return self.media_type == "video"
-
+        if not self.file:
+            return False
+        return self.file.resource_type == "video"
     def __str__(self):
-        return f"Media za {self.product.name}"
-
-
+        return f'Media for {self.product.name}'
+        
 class Order(models.Model):
     STATUS_CHOICES = [
         ('Confirmed', 'Confirmed'),
         ('Fake', 'Fake'),
     ]
-
     name = models.CharField(max_length=100)
     phone = models.CharField(max_length=20)
     location = models.CharField(max_length=100)
@@ -64,17 +55,14 @@ class Order(models.Model):
     quantity = models.IntegerField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Confirmed')
     created_at = models.DateTimeField(auto_now_add=True)
-
     def __str__(self):
         return self.location
-
 
 class SiteSetting(models.Model):
     meta_pixel = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return "Site Settings"
-
 
 class Review(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="reviews")

@@ -4,18 +4,15 @@
 
 <div class="content-container">
     <div class="sales-container">
-
         <form method="post" enctype="multipart/form-data" class="form-box">
-            
             <h2>Enter category details:</h2>
-
             {% csrf_token %}
-
             <label for="name">Name:</label>
             <input type="text" id="name" name="name" required><br><br>
 
-            <input type="file" id="thumbnail" name="thumbnail" accept="image/*">
-            <label for="thumbnail">Upload Image</label><br><br>
+            <label for="thumbnail">Upload Image</label>
+            <input type="file" name="thumbnail" accept="image/*"><br><br>
+            <div id="progress">0%</div>
 
             <label for="description">Description:</label>
             <textarea id="description" name="description"></textarea><br><br>
@@ -25,51 +22,47 @@
         </form>        
 
     </div>
-</div>
-
-
-<!-- ===================== -->
-<!-- CLOUDINARY SCRIPT -->
-<!-- ===================== -->
+</div>            
 <script>
-async function uploadToCloudinary(file) {
+function uploadFile(file) {
+    return new Promise((resolve, reject) => {
 
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", "YOUR_PRESET");
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", "YOUR_PRESET");
+        formData.append("resource_type", "auto");
 
-    const res = await fetch(
-        "https://api.cloudinary.com/v1_1/YOUR_CLOUD_NAME/upload",
-        {
-            method: "POST",
-            body: formData
-        }
-    );
+        const xhr = new XMLHttpRequest();
 
-    return await res.json();
+        xhr.open("POST", "https://api.cloudinary.com/v1_1/YOUR_CLOUD_NAME/upload");
+
+        xhr.upload.onprogress = (e) => {
+            if (e.lengthComputable) {
+                let percent = Math.round((e.loaded / e.total) * 100);
+                document.getElementById("progress").innerText = percent + "%";
+            }
+        };
+
+        xhr.onload = () => resolve(JSON.parse(xhr.responseText));
+        xhr.onerror = reject;
+
+        xhr.send(formData);
+    });
 }
 
+document.querySelector("form").addEventListener("submit", async function(e){
+    const files = document.getElementById("media").files;
 
-// handle category thumbnail upload
-document.getElementById("thumbnail").addEventListener("change", async function (e) {
+    if(files.length === 0) return; // normal Django submit
 
-    const file = e.target.files[0];
+    e.preventDefault();
 
-    if (!file) return;
+    for (let file of files) {
+        await uploadFile(file);
+    }
 
-    const data = await uploadToCloudinary(file);
-
-    console.log("Uploaded:", data);
-
-    // optional: store values in hidden inputs or send via AJAX later
-    window.categoryThumbnail = {
-        url: data.secure_url,
-        type: data.resource_type,
-        public_id: data.public_id
-    };
-
+    this.submit(); // after upload
 });
-
 </script>
 
 {% endblock %}

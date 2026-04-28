@@ -1,91 +1,26 @@
 {% extends 'website/base.html' %}
 {% block content %}
 {% include 'website/tool_bar.html' %}
-
 <div class="content-container">
     <div class="sales-container">
-
-        <form method="POST" class="form-box">
-
-            <h2>Edit Category</h2>
-
+        <form method="POST" class="form-box" enctype="multipart/form-data">
             {% csrf_token %}
-
-            <!-- NAME -->
+            <h2>Edit Category</h2>
             <label>Name</label>
             <input type="text" name="name" value="{{ edit_category.name }}" required>
-
-            <!-- CURRENT THUMBNAIL -->
             <label>Current Thumbnail</label>
-
-            {% if edit_category.thumbnail_url %}
-                <img src="{{ edit_category.thumbnail_url }}" 
-                     style="width:300px; display:block; margin:0 auto;">
+            {% if edit_category.thumbnail %}
+                <img src="{{ edit_category.thumbnail.url }}" style="width:300px; display:block; margin:0 auto;">
             {% else %}
                 <p>No image</p>
             {% endif %}
-
             <br><br>
-
-            <!-- NEW THUMBNAIL (CLOUDINARY UPLOAD) -->
-            <label for="thumbnail">Upload Thumbnail</label>
-            <input type="file" id="thumbnail" accept="image/*">
-
-            <!-- hidden field to store Cloudinary URL -->
-            <input type="hidden" name="thumbnail_url" id="thumbnail_url">
-
-            <br>
-
-            <!-- DESCRIPTION -->
+            <label for="thumbnail" class="edit-btn">Upload New Thumbnail</label>
+            <input type="file" name="thumbnail" id="thumbnail" accept="image/*"><br>
             <label>Description</label>
-            <textarea name="description" id="description">{{ edit_category.description }}</textarea>
-
-            <br><br>
-
+            <textarea name="description" id="description">{{ edit_category.description }}</textarea><br>
             <button type="submit" class="edit-btn">Save Changes</button>
-
         </form>
-
     </div>
 </div>
-
-
-<!-- ===================== -->
-<!-- CLOUDINARY SCRIPT -->
-<!-- ===================== -->
-<script>
-async function uploadToCloudinary(file) {
-
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", "YOUR_PRESET");
-
-    const res = await fetch(
-        "https://api.cloudinary.com/v1_1/YOUR_CLOUD_NAME/upload",
-        {
-            method: "POST",
-            body: formData
-        }
-    );
-
-    return await res.json();
-}
-
-
-// handle thumbnail upload
-document.getElementById("thumbnail").addEventListener("change", async function (e) {
-
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const data = await uploadToCloudinary(file);
-
-    // store URL in hidden input
-    document.getElementById("thumbnail_url").value = data.secure_url;
-
-    console.log("Uploaded:", data.secure_url);
-});
-
-</script>
-
 {% endblock %}

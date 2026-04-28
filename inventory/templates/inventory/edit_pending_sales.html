@@ -3,7 +3,7 @@
 {% include 'inventory/nav.html' %}
 <div class="content-container">
     <div class="sales-container">
-        <form action="" method="POST">
+        <form action="" method="POST" class="form-box">
             <h2>ENTER HOW THE PENDING WENT</h2>
             {% csrf_token %}
             {{edit_pending_sales}}

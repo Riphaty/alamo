@@ -4,18 +4,11 @@
 
 <div class="content-container">
     <div class="sales-container">
-
-        <form method="post" class="form-box">
-
-            <h1>Add Product</h1>
-
+        <form method="post" class="form-box" enctype="multipart/form-data">
+            <h2>Add Product</h2>
             {% csrf_token %}
-
-            <!-- NAME -->
             <label>Name:</label>
             <input type="text" name="name" required>
-
-            <!-- CATEGORY -->
             <label>Category:</label>
             <select name="category" required>
                 <option value="">Select a category</option>
@@ -23,92 +16,59 @@
                     <option value="{{ cat.id }}">{{ cat.name }}</option>
                 {% endfor %}
             </select>
-
-            <!-- CAPTION -->
             <label>Caption:</label>
             <textarea name="caption"></textarea>
-
-            <!-- PRICE -->
             <label>Price:</label>
             <input type="number" name="price" step="500" min="0" required>
-
-            <!-- MEDIA UPLOAD -->
             <label>Upload Media:</label>
-            <input type="file" id="images" accept=".jpg,.jpeg,.png,.webp,.mp4,.webm" multiple>
-
-            <!-- AVAILABLE -->
+            <input type="file" id="media" name="media" accept=".jpg,.jpeg,.png,.webp,.mp4,.webm" multiple>
+            <div id="progress">0%</div>
             <label>Available:</label>
             <input style="width:1.5rem;height:1.5rem;" type="checkbox" name="is_available" checked>
-
-            <!-- HIDDEN FIELD FOR DJANGO -->
-            <input type="hidden" name="media_data" id="media_data">
-
             <br><br>
-
             <button type="submit" class="action edit-btn">Add Product</button>
-
         </form>
-
     </div>
 </div>
-
-
-<!-- ===================== -->
-<!-- CLOUDINARY UPLOAD -->
-<!-- ===================== -->
 <script>
-async function uploadToCloudinary(file) {
+function uploadFile(file) {
+    return new Promise((resolve, reject) => {
 
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", "YOUR_PRESET");
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", "YOUR_PRESET");
+        formData.append("resource_type", "auto");
 
-    const res = await fetch(
-        "https://api.cloudinary.com/v1_1/YOUR_CLOUD_NAME/upload",
-        {
-            method: "POST",
-            body: formData
-        }
-    );
+        const xhr = new XMLHttpRequest();
 
-    return await res.json();
+        xhr.open("POST", "https://api.cloudinary.com/v1_1/YOUR_CLOUD_NAME/upload");
+
+        xhr.upload.onprogress = (e) => {
+            if (e.lengthComputable) {
+                let percent = Math.round((e.loaded / e.total) * 100);
+                document.getElementById("progress").innerText = percent + "%";
+            }
+        };
+
+        xhr.onload = () => resolve(JSON.parse(xhr.responseText));
+        xhr.onerror = reject;
+
+        xhr.send(formData);
+    });
 }
 
+document.querySelector("form").addEventListener("submit", async function(e){
+    const files = document.getElementById("media").files;
 
-// HANDLE FILE UPLOAD
-document.getElementById("images").addEventListener("change", async function (e) {
+    if(files.length === 0) return; // normal Django submit
 
-    const files = e.target.files;
+    e.preventDefault();
 
-    if (!files.length) return;
-
-    let uploadedMedia = [];
-
-    for (let file of files) {
-
-        const data = await uploadToCloudinary(file);
-
-        uploadedMedia.push({
-            url: data.secure_url,
-            type: data.resource_type,
-            public_id: data.public_id
-        });
+    for (let file of files) {                                                           
+        await uploadFile(file);
     }
 
-    window.productMedia = uploadedMedia;
-
-    console.log("Uploaded media:", uploadedMedia);
-});
-
-
-// ATTACH MEDIA TO FORM BEFORE SUBMIT
-document.querySelector("form").addEventListener("submit", function () {
-
-    if (window.productMedia) {
-        document.getElementById("media_data").value =
-            JSON.stringify(window.productMedia);
-    }
+    this.submit(); // after upload
 });
 </script>
-
 {% endblock %}
