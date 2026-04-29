@@ -27,7 +27,7 @@
                             <div class="swiper-slide">
                                 <div class="product-media">
                                     {% if media.is_video %}
-                                        <video class="media" id="video" controls>
+                                        <video class="media" id="video" controls playsinline>
                                             <source src="{{ media.file.url }}">
                                         </video>
                                     {% else %}
