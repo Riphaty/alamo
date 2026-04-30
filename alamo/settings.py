@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.humanize',
+    'django.contrib.sitemaps',
     'website',
     'inventory',
     'shipping',
@@ -197,16 +198,3 @@ LOGOUT_REDIRECT_URL = 'login'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'root': {
-        'handlers': ['console'],
-        'level': 'ERROR',
-    },
-}
