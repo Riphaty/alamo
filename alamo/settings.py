@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'website',
     'inventory',
     'shipping',
+    'cloudinary_storage',
     'cloudinary',
     'django.contrib.staticfiles',
 ]
@@ -138,8 +139,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 # MEDIA_ROOT=os.path.join(BASE_DIR,'media')
 
@@ -177,9 +178,6 @@ STORAGES = {
     "default": {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
-    "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
-    },
 }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -196,4 +194,4 @@ LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'admin_panel'
 LOGOUT_REDIRECT_URL = 'login'
 
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
