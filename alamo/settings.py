@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     'website',
     'inventory',
     'shipping',
-    'cloudinary_storage',
     'cloudinary',
     'django.contrib.staticfiles',
 ]
