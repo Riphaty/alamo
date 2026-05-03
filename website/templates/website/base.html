@@ -52,25 +52,42 @@
             <a href="tel:+255656123248" class="call-btn">Piga Simu</a>
         </div>
     </div>
-<script>
-    const waBtn = document.getElementById("waBtn");
-    const waPopup = document.getElementById("waPopup");
-    waBtn.addEventListener("click", function(e) {
-        e.preventDefault();
+    <script>
+        const waBtn = document.getElementById("waBtn");
+        const waPopup = document.getElementById("waPopup");
+        waBtn.addEventListener("click", function(e) {
+            e.preventDefault();
 
-        if (waPopup.style.display === "block") {
-            waPopup.style.display = "none";
-        } else {
-            waPopup.style.display = "block";
-        }
-    });
+            if (waPopup.style.display === "block") {
+                waPopup.style.display = "none";
+            } else {
+                waPopup.style.display = "block";
+            }
+        });
 
-    // close when clicking outside
-    document.addEventListener("click", function(e) {
-        if (!waPopup.contains(e.target) && e.target !== waBtn) {
-            waPopup.style.display = "none";
+        // close when clicking outside
+        document.addEventListener("click", function(e) {
+            if (!waPopup.contains(e.target) && e.target !== waBtn) {
+                waPopup.style.display = "none";
+            }
+        });
+    </script>
+    <div class="map-container">
+
+        <div class="map-icon" onclick="toggleMap()">
+            <i class="fas fa-map-marker-alt"></i>
+        </div>
+
+        <div class="map-box" id="mapBox">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4921.429137276906!2d39.22896467588042!3d-6.781388893215632!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x185c4fd737d12657%3A0x66d3b626898aea24!2sAlamo%20Electronics!5e1!3m2!1sen!2sus!4v1777815355801!5m2!1sen!2sus" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+        </div>
+
+    </div>
+    <script>
+        function toggleMap() {
+            document.getElementById("mapBox").classList.toggle("active");
         }
-    });
-</script>
+    </script>
 </body>
 </html>

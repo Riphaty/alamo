@@ -26,14 +26,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 
+SECRET_KEY = 'django-insecure-g3u5trfwcezvqc_i1w+_lold(!v6jkdrnq!vb-gm-3+qgdjy&_'
 # ========================================SECRET KEY==================
-SECRET_KEY = os.environ.get('SECRET_KEY')
+#   SECRET_KEY = os.environ.get('SECRET_KEY')
 # ===================================================================
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ["alamodukani.com", "www.alamodukani.com"]                                  
+ALLOWED_HOSTS = ["*"]                                  
 
 
 # Application definition
@@ -45,7 +46,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.humanize',
-    'django.contrib.sitemaps',
     'website',
     'inventory',
     'shipping',
@@ -90,18 +90,18 @@ WSGI_APPLICATION = 'alamo.wsgi.application'
 
 # ==============PRODUCTION DATABASE IPO HAPA==================
 # ==============================================================
-DATABASES = {
-    'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))
-}
+# DATABASES = {
+#     'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))
+# }
 # ========================================================================
 # ========================================================================
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
 
 
 # Password validation
@@ -145,11 +145,11 @@ STATIC_URL = 'static/'
 # ============================CLOUDINARY=========================================
 # ===============================================================================
 
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
-    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
-    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
-}
+# CLOUDINARY_STORAGE = {
+#     'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
+#     'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
+#     'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
+# }
 
 # DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
@@ -163,14 +163,11 @@ CLOUDINARY_STORAGE = {
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
-
-
-cloudinary.config(
-    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
-    api_key=os.getenv('CLOUDINARY_API_KEY'),
-    api_secret=os.getenv('CLOUDINARY_API_SECRET'),
-    secure=True
-)
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': "dkewkxvie",
+    'API_KEY': "634312264696894",
+    'API_SECRET': "xwtHl6g7pcJfm01It8slzEgUI0g"
+}
 
 STORAGES = {
     "default": {
@@ -196,5 +193,4 @@ LOGIN_REDIRECT_URL = 'admin_panel'
 LOGOUT_REDIRECT_URL = 'login'
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-
 
