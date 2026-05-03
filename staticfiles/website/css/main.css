@@ -493,9 +493,7 @@ body.sidebar-open .content-container{
     margin-bottom: 1rem;
     max-width: 500px;
 }
-#thumbnail{
-    display: none;
-}
+
 #description{ 
     min-height: 50px;
     field-sizing: content;
@@ -543,6 +541,12 @@ h2{
 
 p{
   font-size: clamp(1rem, 2vw, 1.2rem) !important;
+}
+h2,h3,h4{
+    color: #444444;
+}
+p{
+    color: #505050;
 }
 /* .................................................................................... */
 /* BUTTONS */
@@ -960,6 +964,33 @@ td, th {
     align-items: center;
 }
 
+.arrangement{
+        display: grid;
+        grid-template-columns: repeat(auto-fit,minmax(100px,1fr));
+    }   
+.array-image, .array-video{
+    border: 1px solid rgba(67, 199, 255, 0.784);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    gap: 5px;
+    padding-bottom:5px;
+
+}
+.array-video video{
+    width: 100%;
+    object-fit: contain;
+}
+.array-image img{
+    width: 100%;
+    object-fit: contain;
+    object-position: bottom;
+    border-radius: 10px;
+}
+
 /* 📱 MOBILE RESPONSIVE */
 @media (max-width: 600px){
 
@@ -991,4 +1022,54 @@ td, th {
         padding: 14px;
         font-size: 14px;
     }
+}
+
+.map-container {
+    position: fixed;
+    bottom: 40px;
+    left: 40px;
+    z-index: 1000;
+}
+
+.map-icon {
+    font-size: 32px;
+    color: #ff0000;
+    cursor: pointer;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.25));
+    transition: transform 0.25s ease, color 0.25s ease;
+}
+
+.map-icon:hover {
+    transform: translateY(-3px) scale(1.15);
+    color: #0056b3;
+}
+.map-icon:active {
+    transform: translateY(-3px) scale(1.15);
+    color: #0056b3;
+}
+
+.map-box {
+    position: absolute;
+    bottom: 40px;
+    left: 0;
+    width: 260px;
+    height: 200px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    opacity: 0;
+    transform: translateY(15px) scale(0.95);
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.map-box iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+.map-box.active {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
 }
