@@ -195,7 +195,7 @@ def sales_history(request):
         .annotate(
             total_sold=Sum('idadi'),
             total_faida=Sum(
-                F('makusanyo') - F('matumizi')
+                (F('makusanyo') - F('matumizi'))-(F('bidhaa__cogs') * F('idadi'))
             )
         )
         .order_by('-total_sold')
