@@ -48,7 +48,7 @@
                 <p>Cash on Delivery</p>
             </div>
             <div class="action-btn">
-                <a href="{% url 'edit_product' product.id %}" class="edit-btn">Edit</a> 
+                <a href="{% url 'edit_product' product.id %}" class="edit-btn"><i class="fas fa-edit"></i></a>
                 <a href="{% url 'delete_product' product.id %}"><i class="fas fa-trash-alt" style="font-size: 30px;"></i></a>
             </div>
             <p>{{product.message}}</p>

@@ -52,7 +52,7 @@
                         <td>{{ ship.time_used }} Days</td>
                         <td>{{ ship.status }}</td>
                         <td>
-                            <a href="{% url 'edit_shipment' ship.id %}" class="edit-btn">Edit</a>  
+                            <a href="{% url 'edit_shipment' ship.id %}" class="edit-btn"><i class="fas fa-edit"></i></a>  
                             <a href="{% url 'delete_shipment' ship.id %} "><i class="fas fa-trash-alt"></i></a>
                         </td>
                     </tr> 

@@ -30,7 +30,7 @@
                 <td>{{ stock.bei | floatformat:2 | intcomma }}</td>
                 <td>{{ stock.margin |floatformat:2| intcomma }}</td>
                 <td>{{ stock.total_value |floatformat:2| intcomma}}</td>
-                <td><a href="{% url 'edit_stocks' stock.id %}" class="edit-btn">Edit</a>
+                <td><a href="{% url 'edit_stocks' stock.id %}" class="edit-btn"><i class="fas fa-edit"></i></a>
             </tr>
             {% endfor %}
             </tbody>
