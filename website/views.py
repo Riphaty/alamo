@@ -263,26 +263,6 @@ def set_fake(request, order_id):
     order.save()
     return redirect('order_flow')
 
-# Site settings
-@login_required
-def save_meta_pixel(request):
-    settings = SiteSetting.objects.first()
-    if request.method == "POST":
-        if request.POST.get("delete_pixel"):
-            if settings:
-                settings.meta_pixel = ""
-                settings.save()
-            return redirect('meta_pixel')
-        code = request.POST.get("meta-pixel", "").strip()
-        if code:
-            if not settings:
-                SiteSetting.objects.create(meta_pixel=code)
-            else:
-                settings.meta_pixel = code
-                settings.save()
-        return redirect('meta_pixel')
-    return render(request, 'website/meta_pixel.html', {'settings': settings})
-
 # Review
 def review_page(request, order_id):
     order = get_object_or_404(Order, id=order_id)
