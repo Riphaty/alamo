@@ -198,7 +198,7 @@ def sales_history(request):
                 (F('makusanyo') - F('matumizi'))-(F('bidhaa__cogs') * F('idadi'))
             )
         )
-        .order_by('-total_sold')
+        .order_by('-total_faida')
     )
 
     labels = [item['bidhaa__name'] for item in analytics]
