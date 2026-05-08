@@ -24,8 +24,6 @@ urlpatterns=[
     path('order/<int:product_id>/',order,name='order'),
     path('order-flow/',order_flow,name='order_flow'),
     path('set-fake/<int:order_id>/',set_fake,name='set_fake'),
-    
-    path('meta-pixel/',save_meta_pixel,name='meta_pixel'),
 
     path('login/', auth_views.LoginView.as_view(template_name='auth/login.html'), name='login'),
     path('logout/', logout_view, name='logout'),
