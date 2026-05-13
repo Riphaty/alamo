@@ -114,12 +114,7 @@ def delete_sales(request,id):
 
 @login_required
 def sales_history(request):
-
-    # -----------------------------
-    # 1. SALES BASE QUERYSET
-    # -----------------------------
-    sales = Sale.objects.all()
-    
+    sales = Sale.objects.all()  
     start_date = request.GET.get('start_date')
     end_date = request.GET.get('end_date')
 

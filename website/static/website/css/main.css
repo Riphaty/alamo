@@ -106,6 +106,12 @@ body{
 
 /* PRODUCT CARD IMAGES */
 /* .................................................................................... */
+.product-media {
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
 .product-media img{
     display: block;
     margin:auto;
@@ -116,6 +122,12 @@ body{
     aspect-ratio: 1/1;
     border-radius: 1rem;
 }
+.swiper {
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
 .swiper-slide {
     aspect-ratio: 1 / 1;
     overflow: hidden;
@@ -128,6 +140,7 @@ body{
     padding:0px 10px !important;
     margin: auto 10px !important;
     background-color: rgba(240, 248, 255, 0.37) !important;
+    overflow: hidden !important;
   
 }
 .swiper-button-next::after,
