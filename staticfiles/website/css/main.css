@@ -111,8 +111,6 @@ body{
     border-radius: 12px;
     width: 100%;
     aspect-ratio: 1/1;
-    overflow: hidden;
-
 }
 
 .product-media img{
