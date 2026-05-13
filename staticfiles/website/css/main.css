@@ -108,7 +108,6 @@ body{
 /* .................................................................................... */
 .product-media {
     position: relative;
-    overflow: hidden;
     border-radius: 12px;
     width: 100%;
     aspect-ratio: 1/1;
@@ -155,17 +154,16 @@ body{
     background: rgb(26, 158, 252) !important;
 }
 .swiper-pagination {
-    position: static;
-    margin-top: 5px;
+    position: absolute;
     text-align: center;
-    z-index: 999;
+    bottom: -10px !important;
 }
 .media-box {
     width: 100%;
     aspect-ratio: 1/1;
     overflow: hidden;
     position: relative;
-    background: #000;
+    background: #ffffff;
 }
 
 #video{
