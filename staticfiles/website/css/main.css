@@ -111,6 +111,8 @@ body{
     border-radius: 12px;
     width: 100%;
     aspect-ratio: 1/1;
+    overflow: hidden;
+
 }
 
 .product-media img{
@@ -149,11 +151,11 @@ body{
     overflow: hidden !important;
     position: absolute !important;
     top: 50% !important;
-    transform: translateY(-50%) !important;
-    -webkit-transform: translateY(-50%);
-    -webkit-backface-visibility: hidden;
     z-index: 10 !important;
+    transform: translate3d(0, -50%, 0) !important;
+    -webkit-transform: translate3d(0, -50%, 0);
 }
+
 .swiper-button-next::after,
 .swiper-button-prev::after {
     font-size: 30px !important;
