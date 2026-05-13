@@ -147,7 +147,7 @@ body{
 .swiper-pagination {
     position: absolute;
     text-align: center;
-    bottom: -10px !important;
+    bottom: -15px !important;
 }
 .media-box {
     width: 100%;
