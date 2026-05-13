@@ -40,11 +40,7 @@
                             <div class="empty">No Media available</div>
                         {% endfor %}
 
-                    </div>
-
-                    <!-- Swiper controls -->
-                    <div class="swiper-button-next"></div>
-                    <div class="swiper-button-prev"></div>
+                    </div>  
                     
                 </div>
                 <div class="swiper-pagination"></div>
@@ -92,11 +88,6 @@ document.querySelectorAll('.product-card').forEach((card) => {
         pagination: {
             el: card.querySelector('.swiper-pagination'),
             clickable: true,
-        },
-
-        navigation: {
-            nextEl: card.querySelector('.swiper-button-next'),
-            prevEl: card.querySelector('.swiper-button-prev'),
         },
     });
 
