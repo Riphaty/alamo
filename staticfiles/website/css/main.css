@@ -129,8 +129,12 @@ body{
     height: 100%;
     position: relative;
 }
+.swiper-wrapper{
+    height: 100%;
+}
 
 .swiper-slide {
+    height: 100%;
     aspect-ratio: 1 / 1;
     overflow: hidden;
     position: relative;
