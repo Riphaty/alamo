@@ -148,7 +148,7 @@ body{
     font-size: 30px !important;
 }
 .swiper-pagination-bullet-active {
-    background: black !important;
+    background: rgb(26, 158, 252) !important;
 }
 .swiper-pagination {
     position: static;
