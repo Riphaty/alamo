@@ -110,6 +110,9 @@ body{
     position: relative;
     overflow: hidden;
     border-radius: 12px;
+    width: 100%;
+    aspect-ratio: 1/1;
+
 }
 
 .product-media img{
@@ -132,6 +135,7 @@ body{
     aspect-ratio: 1 / 1;
     overflow: hidden;
     position: relative;
+    z-index: 999;
 }
 
 .swiper-button-next,
@@ -169,7 +173,6 @@ body{
     object-position: center;
     width: 100%;
     height: 100%;                                                                                                                                           
-    aspect-ratio: 1/1;
     overflow: hidden;
 }
 
