@@ -147,7 +147,8 @@ body{
     padding:0px 10px !important;
     margin: auto 10px !important;
     background-color: rgba(240, 248, 255, 0) !important;
-    position: relative !important;
+    overflow: hidden !important;
+    position: absolute !important;
     top: 50% !important;
     transform: translateY(-50%) !important;
     -webkit-transform: translateY(-50%);
